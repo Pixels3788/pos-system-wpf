@@ -1,0 +1,22 @@
+# Build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS
+.vs/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
