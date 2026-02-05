@@ -7,15 +7,16 @@ using System;
 
 using System.Text;
 using PointOfSaleSystem.Services.Interfaces;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
     public class OrderService : IOrderService
     {
 
-        private DbManager _dbManager;
+        private IDbManager _dbManager;
 
-        public OrderService(DbManager dbManager)
+        public OrderService(IDbManager dbManager)
         {
             _dbManager = dbManager;
         }

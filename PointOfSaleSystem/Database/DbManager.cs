@@ -5,10 +5,11 @@ using System.IO;
 using Microsoft.Data.Sqlite;
 using System.DirectoryServices;
 using System.Dynamic;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Database
 {
-    public class DbManager : IDisposable
+    public class DbManager : IDbManager
     {
         private const string DefaultDbPath = "Database/pos_system.db";
         private readonly string _connectionString;

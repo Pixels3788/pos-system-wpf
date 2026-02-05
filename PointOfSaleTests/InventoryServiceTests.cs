@@ -8,6 +8,7 @@ using PointOfSaleSystem.Models;
 using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Database;
 using PointOfSaleSystem.Services.Interfaces;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleTests
 {

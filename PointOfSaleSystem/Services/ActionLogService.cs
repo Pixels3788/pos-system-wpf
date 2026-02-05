@@ -6,15 +6,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls.Primitives;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
     internal class ActionLogService : IActionLogService
     {
 
-        private DbManager _dbManager;
+        private IDbManager _dbManager;
 
-        public ActionLogService(DbManager dbManager)
+        public ActionLogService(IDbManager dbManager)
         {
             _dbManager = dbManager;
         }

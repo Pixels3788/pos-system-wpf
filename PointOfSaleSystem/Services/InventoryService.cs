@@ -5,15 +5,16 @@ using PointOfSaleSystem.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
     public class InventoryService : IInventoryService
     {
 
-        private DbManager _dbManager;
+        private IDbManager _dbManager;
 
-        public InventoryService(DbManager dbManager)
+        public InventoryService(IDbManager dbManager)
         {
             _dbManager = dbManager;
         }

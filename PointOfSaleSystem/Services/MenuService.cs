@@ -8,15 +8,16 @@ using PointOfSaleSystem.Database;
 using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Linq;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
     public class MenuService : IMenuService
     {
 
-        private DbManager _dbManager;
+        private IDbManager _dbManager;
 
-        public MenuService(DbManager dbManager)
+        public MenuService(IDbManager dbManager)
         {
             _dbManager = dbManager;
         }

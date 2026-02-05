@@ -6,14 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Dapper;
+using PointOfSaleSystem.Database.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
     public class UserService : IUserService
     {
-        private DbManager _dbManager;
+        private IDbManager _dbManager;
 
-        public UserService(DbManager dbManager)
+        public UserService(IDbManager dbManager)
         {
             _dbManager = dbManager; 
         }
