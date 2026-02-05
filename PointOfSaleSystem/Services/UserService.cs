@@ -29,6 +29,8 @@ namespace PointOfSaleSystem.Services
 
             if (pin.ToString().Length > 6 || pin.ToString().Length < 4) return null;
 
+            if (pin < 0) return null;
+
             User newUser = new User(firstName, lastName, email, pin);
 
             using var connection = _dbManager.GetConnection();
@@ -81,6 +83,8 @@ namespace PointOfSaleSystem.Services
             var updatedUser = GetUserById(userId);
 
             if (updatedUser == null) return null;
+            if (pin < 0) return null;
+            if (pin.ToString().Length > 6 || pin.ToString().Length < 4) return null;
 
 
             using var connection = _dbManager.GetConnection();
@@ -101,6 +105,8 @@ namespace PointOfSaleSystem.Services
 
             if (updatedUser == null) return null;
 
+            if (string.IsNullOrWhiteSpace(email)) return null;
+
             using var connection = _dbManager.GetConnection();
 
             connection.Execute(
@@ -117,6 +123,8 @@ namespace PointOfSaleSystem.Services
         {
             var updatedItem = GetUserById(userId);
             if (updatedItem == null) return null;
+
+            if (string.IsNullOrWhiteSpace(role)) return null;
 
             using var connection = _dbManager.GetConnection();
 

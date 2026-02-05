@@ -10,7 +10,7 @@ using PointOfSaleSystem.Services.Interfaces;
 
 namespace PointOfSaleSystem.Services
 {
-    internal class OrderService : IOrderService
+    public class OrderService : IOrderService
     {
 
         private DbManager _dbManager;
