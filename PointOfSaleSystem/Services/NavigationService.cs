@@ -12,10 +12,10 @@ namespace PointOfSaleSystem.Services
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private BaseViewModel _currentViewModel;
+        private BaseViewModel? _currentViewModel;
         private User? _currentUser;
 
-        public BaseViewModel CurrentViewModel
+        public BaseViewModel? CurrentViewModel
         {
             get => _currentViewModel;
             private set
