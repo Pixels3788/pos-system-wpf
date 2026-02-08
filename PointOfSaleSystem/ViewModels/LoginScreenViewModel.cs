@@ -45,6 +45,8 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand DeleteDigitCommand { get; }
 
+        public ICommand OpenCreationMenuCommand { get;  }
+
         public LoginScreenViewModel(INavigationService navigationService, IUserService userService)
         {
             _navigationService = navigationService;
@@ -61,6 +63,7 @@ namespace PointOfSaleSystem.ViewModels
                 if (!string.IsNullOrEmpty(PinInput))
                     PinInput = PinInput[..^1];
             });
+            OpenCreationMenuCommand = new RelayCommand(OpenUserCreationScreen);
         }
 
 
@@ -81,8 +84,14 @@ namespace PointOfSaleSystem.ViewModels
             }
             else
             {
+                LoginMessage = "Successful Login";
                 _navigationService.SetCurrentUser(loggedUser);
             }
+        }
+
+        public void OpenUserCreationScreen()
+        {
+            _navigationService.Navigate<CreateNewUserViewModel>();
         }
     }
 }

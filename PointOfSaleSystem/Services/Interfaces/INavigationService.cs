@@ -14,5 +14,9 @@ namespace PointOfSaleSystem.Services.Interfaces
         BaseViewModel CurrentViewModel { get; set; }
 
         User? CurrentUser { get; }
+        public void Navigate<TViewModel>() where TViewModel : BaseViewModel;
+
+        public void Register<TViewModel>(Func<TViewModel> factory) where TViewModel : BaseViewModel;
+
     }
 }

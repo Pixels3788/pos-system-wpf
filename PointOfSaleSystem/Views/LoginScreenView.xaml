@@ -23,7 +23,7 @@
 
         <ui:Card Grid.Row="1" Grid.Column="1" Padding="20" MaxWidth="400">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-               <TextBlock Text="{Binding PinInput}" 
+                <TextBlock Text="{Binding PinInput}" 
                    FontSize="36" 
                    HorizontalAlignment="Center" 
                    TextAlignment="Center"
@@ -61,6 +61,7 @@
                 </UniformGrid>
             </StackPanel>
         </ui:Card>
+        <Button Command="{Binding OpenCreationMenuCommand}" Content="Create A New User" VerticalAlignment="Top" Width="292" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center"/>
 
     </Grid>
 </UserControl>

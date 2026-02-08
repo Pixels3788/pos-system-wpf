@@ -20,6 +20,9 @@
                 <views:LoginScreenView />
                 
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:CreateNewUserViewModel}">
+                <views:CreateNewUserScreen />
+            </DataTemplate>
         </ResourceDictionary>
        
     </Application.Resources>

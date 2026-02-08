@@ -4,9 +4,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PointOfSaleSystem.Views"
+             xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="900" d:DesignWidth="1600">
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        
+        
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
+
+            <TextBlock Text="Create New User"
+                       FontSize="30"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,20"/>
+
+            <TextBlock Text="{Binding CreationMessage}"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       Margin="0,0,0,15"/>
+
+            <ui:TextBox Text="{Binding FirstName}" PlaceholderText="First Name" Margin="0,0,0,15"  MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
+            <ui:TextBox Text="{Binding LastName}" PlaceholderText="Last Name" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
+            <ui:TextBox Text="{Binding UserEmail}" PlaceholderText="Email" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
+            <ui:TextBox Text="{Binding UserPin}" PlaceholderText="Pin" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
+            <ui:Button Content="Create User" Command="{Binding CreateUserCommand}" FontSize="25"  Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch">
+                
+            </ui:Button>
+        </StackPanel>
+
     </Grid>
 </UserControl>

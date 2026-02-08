@@ -17,7 +17,8 @@ namespace PointOfSaleSystem.Services
 
         private LoginScreenViewModel _loginVm;
 
-        
+        private readonly Dictionary<Type, Func<BaseViewModel>> _vmFactories = new();
+
 
         public BaseViewModel? CurrentViewModel
         {
@@ -44,6 +45,20 @@ namespace PointOfSaleSystem.Services
                 }
             }
         }
+
+        public void Register<TViewModel>(Func<TViewModel> factory) where TViewModel : BaseViewModel
+        {
+            _vmFactories[typeof(TViewModel)] = () => factory();
+        }
+
+        public void Navigate<TViewModel>() where TViewModel : BaseViewModel
+        {
+            if (!_vmFactories.TryGetValue(typeof(TViewModel), out var factory))
+                throw new Exception($"No factory registered for {typeof(TViewModel).Name}");
+
+            CurrentViewModel = factory();
+        }
+
 
         public void SetCurrentUser(User user)
         {

@@ -26,10 +26,13 @@ namespace PointOfSaleSystem
             var navigationService = new NavigationService();
             var userService = new UserService(dbManager);
 
+            navigationService.Register(() => new LoginScreenViewModel(navigationService, userService));
+            navigationService.Register(() => new CreateNewUserViewModel(navigationService, userService));
+
+            navigationService.Navigate<LoginScreenViewModel>();
+
             var mainWindowVM = new MainWindowViewModel(navigationService);
             var mainWindow = new MainWindow(mainWindowVM);
-            var loginScreenVM = new LoginScreenViewModel(navigationService, userService);
-            navigationService.CurrentViewModel = loginScreenVM;
 
             
 
