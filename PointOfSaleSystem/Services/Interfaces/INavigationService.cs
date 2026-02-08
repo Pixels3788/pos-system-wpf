@@ -11,7 +11,7 @@ namespace PointOfSaleSystem.Services.Interfaces
     {
         void SetCurrentUser(User user);
 
-        BaseViewModel CurrentViewModel { get; }
+        BaseViewModel CurrentViewModel { get; set; }
 
         User? CurrentUser { get; }
     }

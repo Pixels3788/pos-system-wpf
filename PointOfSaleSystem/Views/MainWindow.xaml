@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+    xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
     mc:Ignorable="d"
-    Title="Point Of Sale"  Height="900" Width="1600">
+    Title="Point Of Sale"  d:DesignHeight="900" d:DesignWidth="1600">
 
-    <Grid>
+    <ui:FluentWindow.Content>
+    <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -16,8 +17,11 @@
 
         <ContentControl Grid.Row="1"
                         Content="{Binding CurrentViewModel}"/>
+    
 
 
     </Grid>
+    </ui:FluentWindow.Content>
+    
 
 </ui:FluentWindow>

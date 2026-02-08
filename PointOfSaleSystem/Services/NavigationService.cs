@@ -15,10 +15,14 @@ namespace PointOfSaleSystem.Services
         private BaseViewModel? _currentViewModel;
         private User? _currentUser;
 
+        private LoginScreenViewModel _loginVm;
+
+        
+
         public BaseViewModel? CurrentViewModel
         {
             get => _currentViewModel;
-            private set
+            set
             {
                 if (_currentViewModel != value)
                 {

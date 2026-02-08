@@ -11,16 +11,23 @@ namespace PointOfSaleSystem.ViewModels
     {
         private readonly INavigationService _navigationService;
 
-        public BaseViewModel? CurrentViewModel => _navigationService.CurrentViewModel;
+        private BaseViewModel? _currentViewModel;
+        public BaseViewModel? CurrentViewModel
+        {
+            get => _currentViewModel;
+            set => SetProperty(ref _currentViewModel, value);
+        }
 
         public MainWindowViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
 
-            _navigationService.PropertyChanged += (s, e) =>
+            CurrentViewModel = _navigationService.CurrentViewModel;
+
+            _navigationService.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(INavigationService.CurrentViewModel))
-                    OnPropertyChanged(nameof(CurrentViewModel));
+                    CurrentViewModel = _navigationService.CurrentViewModel;
             };
         }
     }
