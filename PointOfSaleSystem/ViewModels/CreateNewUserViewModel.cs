@@ -79,12 +79,15 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand CreateUserCommand { get;  }
 
+        public ICommand NavigateToLoginCommand { get; }
+
         public CreateNewUserViewModel(INavigationService navigationService, IUserService userService)
         {
             _userService = userService;
             _navigationService = navigationService;
             CreateUserCommand = new RelayCommand(CreateUser, () => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)
                                                 && !string.IsNullOrWhiteSpace(UserEmail) && !string.IsNullOrWhiteSpace(UserPin));
+            NavigateToLoginCommand = new RelayCommand(BackToLogin);
         }
 
         public void CreateUser()
@@ -110,6 +113,11 @@ namespace PointOfSaleSystem.ViewModels
             {
                 CreationMessage = "User Creation Succeeded! User has been registered";
             }
+        }
+
+        public void BackToLogin()
+        {
+            _navigationService.Navigate<LoginScreenViewModel>();
         }
  
 

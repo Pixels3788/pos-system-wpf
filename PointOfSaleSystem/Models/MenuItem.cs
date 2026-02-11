@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Configuration;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace PointOfSaleSystem.Models
 {
-    public class MenuItem
+    public class MenuItem : INotifyPropertyChanged
     {
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Name { get; set; }
 
@@ -14,6 +19,21 @@ namespace PointOfSaleSystem.Models
         public string Category { get; set; }    
 
         public int ItemId {  get; set; }
+
+        private bool _isAvailable;
+
+        public bool IsAvailable
+        {
+            get => _isAvailable;
+            set
+            {
+                if (_isAvailable != value)
+                {
+                    _isAvailable = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public MenuItem(string name, decimal price, string category)
         {
@@ -24,5 +44,10 @@ namespace PointOfSaleSystem.Models
 
         public MenuItem() { }
 
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
     }
 }

@@ -23,6 +23,16 @@
             <DataTemplate DataType="{x:Type vm:CreateNewUserViewModel}">
                 <views:CreateNewUserScreen />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:OrderTakingScreenViewModel}">
+                <views:OrderTakingScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:OpenOrdersScreenViewModel}">
+                <views:OpenOrdersScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ClosedOrdersScreenViewModel}">
+                <views:ClosedOrdersScreenView />
+            </DataTemplate>
+            
         </ResourceDictionary>
        
     </Application.Resources>

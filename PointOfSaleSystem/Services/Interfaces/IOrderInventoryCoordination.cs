@@ -12,5 +12,7 @@ namespace PointOfSaleSystem.Services.Interfaces
 
         void IncrementOnDeletion(OrderLineItem item);
 
+        void DecrementOnQuantityChanged(OrderLineItem item, int quantity);
+
     }
 }

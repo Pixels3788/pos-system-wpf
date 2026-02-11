@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PointOfSaleSystem.Services
 {
-    internal class OrderInventoryCoordination
+    public class OrderInventoryCoordination : IOrderInventoryCoordination
     {
         private IOrderService _orderService;
         private IInventoryService _inventoryService;
@@ -46,6 +46,15 @@ namespace PointOfSaleSystem.Services
             _orderService.DeleteLineItem(item.LineItemId);
 
 
+        }
+
+        public void DecrementOnQuantityChanged(OrderLineItem item, int quantity)
+        {
+            InventoryItem? correspondingInventoryItem = _inventoryService.GetInventoryItemByMenuItemId(item.MenuItemId);
+
+            if (correspondingInventoryItem == null) return;
+
+            correspondingInventoryItem = _inventoryService.DecrementInventoryItem(correspondingInventoryItem.InventoryItemId, quantity);
         }
     }
 }

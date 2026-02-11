@@ -36,7 +36,9 @@
             <ui:TextBox Text="{Binding UserPin}" PlaceholderText="Pin" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
             <ui:Button Content="Create User" Command="{Binding CreateUserCommand}" FontSize="25"  Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch">
                 
+                
             </ui:Button>
+            <ui:Button Content="Back To Login Screen" Command="{Binding NavigateToLoginCommand}" FontSize="25"  Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch" />
         </StackPanel>
 
     </Grid>

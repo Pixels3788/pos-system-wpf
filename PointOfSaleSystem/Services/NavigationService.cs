@@ -59,6 +59,21 @@ namespace PointOfSaleSystem.Services
             CurrentViewModel = factory();
         }
 
+        public void Navigate<TViewModel>(object? parameter) where TViewModel : BaseViewModel
+        {
+            if (!_vmFactories.TryGetValue(typeof(TViewModel), out var factory))
+                throw new Exception($"No factory registered for {typeof(TViewModel).Name}");
+
+            var viewModel = factory();
+
+            if (viewModel is INavigable navigable && parameter != null)
+            {
+                navigable.Initialize(parameter);
+            }
+
+            CurrentViewModel = viewModel;
+        }
+
 
         public void SetCurrentUser(User user)
         {

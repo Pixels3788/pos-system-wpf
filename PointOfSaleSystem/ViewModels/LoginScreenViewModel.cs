@@ -86,6 +86,7 @@ namespace PointOfSaleSystem.ViewModels
             {
                 LoginMessage = "Successful Login";
                 _navigationService.SetCurrentUser(loggedUser);
+                _navigationService.Navigate<OrderTakingScreenViewModel>();
             }
         }
 

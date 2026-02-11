@@ -23,13 +23,30 @@ namespace PointOfSaleSystem
 
             var dbManager = new DbManager();
 
-            var navigationService = new NavigationService();
-            var userService = new UserService(dbManager);
+            INavigationService navigationService = new NavigationService();
+            IUserService userService = new UserService(dbManager);
+            IInventoryService inventoryService = new InventoryService(dbManager);
+            IOrderService orderService = new OrderService(dbManager);
+            IMenuService menuService = new MenuService(dbManager);
+            IOrderInventoryCoordination inventoryOrderCoordination = new OrderInventoryCoordination(orderService, inventoryService);
+            InventoryMenuCoordinator inventoryMenuCoordinator = new InventoryMenuCoordinator(inventoryService, menuService);
 
+            
             navigationService.Register(() => new LoginScreenViewModel(navigationService, userService));
             navigationService.Register(() => new CreateNewUserViewModel(navigationService, userService));
+            navigationService.Register(() => new OrderTakingScreenViewModel(
+                navigationService,
+                inventoryOrderCoordination,
+                orderService,
+                menuService,
+                inventoryMenuCoordinator,
+                inventoryService));
+            navigationService.Register(() => new OpenOrdersScreenViewModel(navigationService, orderService, inventoryOrderCoordination));
+            navigationService.Register(() => new ClosedOrdersScreenViewModel(navigationService, orderService));
 
+            
             navigationService.Navigate<LoginScreenViewModel>();
+
 
             var mainWindowVM = new MainWindowViewModel(navigationService);
             var mainWindow = new MainWindow(mainWindowVM);

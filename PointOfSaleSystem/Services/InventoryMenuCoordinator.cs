@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PointOfSaleSystem.Services
 {
-    internal class InventoryMenuCoordinator : IInventoryMenuCoordinator
+    public class InventoryMenuCoordinator : IInventoryMenuCoordinator
     {
 
         private IInventoryService _inventoryService;

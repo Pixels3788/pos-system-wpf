@@ -1,0 +1,162 @@
+﻿<UserControl x:Class="PointOfSaleSystem.Views.ClosedOrdersScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PointOfSaleSystem.Views"
+             xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1600">
+    <Grid Background="White" Margin="10">
+
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            
+            <ColumnDefinition Width="3*" />
+           
+        </Grid.ColumnDefinitions>
+
+        
+        <Border Margin="5"
+                Padding="10"
+                Background="#FFF0F0F0"
+                CornerRadius="5">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Closed Orders"
+                           FontSize="22"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <ListView Grid.Row="1"
+                          ItemsSource="{Binding ClosedOrders}"
+                          SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
+                          FontSize="16"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Order #"
+                                            DisplayMemberBinding="{Binding OrderId}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Created"
+                                            DisplayMemberBinding="{Binding CreatedAt}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Closed"
+                                            DisplayMemberBinding="{Binding FinalizedAt}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Total"
+                                            DisplayMemberBinding="{Binding OrderTotal}"
+                                            Width="Auto"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                
+                <ui:Button Grid.Row="2"
+                           Content="← Back to Open Orders"
+                           Height="45"
+                           Margin="0,10,0,0"
+                           Command="{Binding NavigateToOpenOrdersCommand}" />
+            </Grid>
+        </Border>
+
+        
+        <Border Grid.Column="1"
+                Margin="5"
+                Padding="10"
+                Background="#FFF0F0F0"
+                CornerRadius="5">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    
+                    <RowDefinition Height="*"/>
+                    
+                    <RowDefinition Height="Auto"/>
+                    
+                </Grid.RowDefinitions>
+
+                
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,10">
+                    <TextBlock Text="Order #"
+                               FontSize="20"
+                               FontWeight="Bold"/>
+                    <TextBlock Text="{Binding SelectedOrder.OrderId}"
+                               FontSize="20"
+                               Margin="10,0,0,0"/>
+                </StackPanel>
+
+                
+                <ListView Grid.Row="1"
+                          ItemsSource="{Binding SelectedOrder.LineOrder}"
+                          FontSize="16"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Item"
+                                            DisplayMemberBinding="{Binding NameAtSale}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Unit Price"
+                                            DisplayMemberBinding="{Binding UnitPrice}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Qty"
+                                            DisplayMemberBinding="{Binding Quantity}"
+                                            Width="Auto"/>
+                            <GridViewColumn Header="Line Total"
+                                            DisplayMemberBinding="{Binding LineTotal}"
+                                            Width="Auto"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                
+                <Border Grid.Row="2"
+                        Background="White"
+                        CornerRadius="5"
+                        Padding="10"
+                        Margin="0,10,0,0">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Created:"
+                                       FontWeight="Bold"/>
+                            <TextBlock Text="{Binding SelectedOrder.CreatedAt}"/>
+
+                            <TextBlock Text="Closed:"
+                                       FontWeight="Bold"
+                                       Margin="0,5,0,0"/>
+                            <TextBlock Text="{Binding SelectedOrder.FinalizedAt}"/>
+                        </StackPanel>
+
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding SelectedOrder.OrderTotal, StringFormat=C}"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>
