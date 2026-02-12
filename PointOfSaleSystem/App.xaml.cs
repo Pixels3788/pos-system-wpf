@@ -35,6 +35,7 @@ namespace PointOfSaleSystem
             navigationService.Register(() => new LoginScreenViewModel(navigationService, userService));
             navigationService.Register(() => new CreateNewUserViewModel(navigationService, userService));
             navigationService.Register(() => new OrderTakingScreenViewModel(
+                userService,
                 navigationService,
                 inventoryOrderCoordination,
                 orderService,
@@ -43,6 +44,9 @@ namespace PointOfSaleSystem
                 inventoryService));
             navigationService.Register(() => new OpenOrdersScreenViewModel(navigationService, orderService, inventoryOrderCoordination));
             navigationService.Register(() => new ClosedOrdersScreenViewModel(navigationService, orderService));
+            navigationService.Register(() => new InventoryEditorScreenViewModel(inventoryMenuCoordinator, navigationService, inventoryService));
+            navigationService.Register(() => new ManagerPanelScreenViewModel(navigationService));
+            navigationService.Register(() => new EditMenuScreenViewModel(navigationService, menuService, inventoryMenuCoordinator));
 
             
             navigationService.Navigate<LoginScreenViewModel>();

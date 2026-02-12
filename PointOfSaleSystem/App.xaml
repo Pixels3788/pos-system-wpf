@@ -12,7 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Light" />
-                <!-- Or Theme="Light" -->
+                
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
 
@@ -31,6 +31,15 @@
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ClosedOrdersScreenViewModel}">
                 <views:ClosedOrdersScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:InventoryEditorScreenViewModel}">
+                <views:InventoryEditorScreenView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ManagerPanelScreenViewModel}">
+                <views:ManagerPanelScreen />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:EditMenuScreenViewModel}">
+                <views:EditMenuScreenView />
             </DataTemplate>
             
         </ResourceDictionary>

@@ -20,5 +20,7 @@ namespace PointOfSaleSystem.Services.Interfaces
         InventoryItem? DecrementInventoryItem(int itemId, int quantitySold);
 
         InventoryItem? IncrementInventoryItem(int itemId, int quantityAdded);
+
+        InventoryItem? ChangeInventoryItemQuantity(int itemId, int newQuantity);
     }
 }

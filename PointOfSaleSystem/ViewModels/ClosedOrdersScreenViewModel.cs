@@ -17,6 +17,38 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IOrderService _orderService;
 
+        
+
+        public decimal TodaysEarnings
+        {
+            get
+            {
+                decimal sum = 0m;
+                foreach (var item in _closedOrders.Where(o => o.CreatedAt.Date == DateTime.Today))
+                {
+                    sum += item.OrderTotal;
+                }
+                return sum;
+            }
+           
+        }
+
+        public decimal LifeTimeEarnings
+        {
+            get 
+            {
+                decimal sum = 0m;
+                foreach (var item in _closedOrders)
+                {
+                    sum += item.OrderTotal;
+                }
+                return sum;
+            }
+        }
+
+        
+        
+
         private ObservableCollection<Order> _closedOrders;
 
         public ObservableCollection<Order> ClosedOrders

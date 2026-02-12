@@ -104,6 +104,23 @@ namespace PointOfSaleSystem.Services
 
         }
 
+        public InventoryItem? ChangeInventoryItemQuantity(int itemId, int newQuantity)
+        {
+            if (newQuantity <= 0) return null;
+            InventoryItem item = GetItemById(itemId);
+
+            if (item == null) return null;
+            if (newQuantity <= 0) return null;
+            using var connection = _dbManager.GetConnection();
+
+            connection.Execute(
+                "UPDATE InventoryItems SET QuantityOnHand = @NewQuantity WHERE InventoryItemId = @InventoryItemId",
+                new {NewQuantity = newQuantity, InventoryItemId = itemId}
+            );
+
+            return GetItemById(itemId);
+        }
+
         public InventoryItem? IncrementInventoryItem(int itemId, int quantityAdded) 
         {
             InventoryItem? item = GetItemById(itemId);

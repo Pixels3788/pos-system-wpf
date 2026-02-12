@@ -23,6 +23,7 @@
             <ui:Button Command="{Binding NavigateToOpenOrdersCommand}" Content="View Open Orders" Margin="5" MinWidth="120" MinHeight="60"/>
             <ui:Button Command="{Binding LogoutCommand}" Content="Logout" Margin="5" MinWidth="120" MinHeight="60"/>
             <ui:Button Command="{Binding SeedMenuItemsCommand}" Content="Generate Menu Items" Margin="5" MinWidth="120" MinHeight="60"/>
+            <ui:Button Command="{Binding NavigateToManagerPanelCommand}" IsEnabled="{Binding IsManager}" Content="Open Manager Panel" Margin="5" MinWidth="120" MinHeight="60"/>
         </StackPanel>
 
         

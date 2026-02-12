@@ -1,0 +1,91 @@
+﻿<UserControl x:Class="PointOfSaleSystem.Views.InventoryEditorScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1600">
+
+    <Grid Background="White" Margin="10">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="Inventory Editor"
+                   FontSize="26"
+                   FontWeight="Bold"
+                   Margin="5"/>
+
+        <!-- Inventory Table -->
+        <Border Grid.Row="1"
+                Margin="5"
+                Padding="10"
+                Background="#FFF0F0F0"
+                CornerRadius="6">
+
+            <DataGrid ItemsSource="{Binding InventoryItems}"
+                      SelectedItem="{Binding SelectedInventoryItem, Mode=TwoWay}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      IsReadOnly="False"
+                      GridLinesVisibility="None"
+                      HeadersVisibility="Column"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      FontSize="16"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch">
+
+                <DataGrid.Columns>
+
+                    <!-- Item Name -->
+                    <DataGridTextColumn Header="Item Name"
+                                        Binding="{Binding MenuItemName}"
+                                        IsReadOnly="True"
+                                        Width="2*"/>
+
+                    <!-- Quantity (Editable on double click) -->
+                    <DataGridTextColumn Header="Quantity On Hand"
+                                        Binding="{Binding QuantityOnHand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Width="*"/>
+
+                    <!-- Availability -->
+                    <DataGridCheckBoxColumn Header="Available"
+                                            Binding="{Binding IsAvailable, Mode=OneWay}"
+                                            IsReadOnly="True"
+                                            Width="*"/>
+
+                </DataGrid.Columns>
+
+            </DataGrid>
+
+        </Border>
+
+        <!-- Bottom Controls -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="5">
+
+            <ui:Button Content="Save Changes"
+                       Width="150"
+                       Height="45"
+                       Margin="5"
+                       Command="{Binding SaveInventoryCommand}"/>
+
+            <ui:Button Content="Back"
+                       Width="120"
+                       Height="45"
+                       Margin="5"
+                       Command="{Binding NavigateToOrderScreenCommand}"/>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

@@ -50,6 +50,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IInventoryService _inventoryService;
 
+        private readonly IUserService _userService;
+
         private ObservableCollection<MenuItem> _menuItems; 
 
         public ObservableCollection<MenuItem> MenuItems
@@ -71,6 +73,24 @@ namespace PointOfSaleSystem.ViewModels
                 SetProperty(ref _currentOrderLineItems, value);
             }
         }
+
+        
+
+        public bool IsManager
+        {
+            get
+            {
+                if (_navigationService.CurrentUser.UserRole == "Manager")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false; 
+                }
+            }
+        }
+        
 
         
 
@@ -134,8 +154,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToOpenOrdersCommand { get; }
 
-        public OrderTakingScreenViewModel(INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService)
+        public ICommand NavigateToManagerPanelCommand { get; }
+
+        public OrderTakingScreenViewModel(IUserService userService, INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService)
         {
+            _userService = userService;
             _navigationService = navigationService;
             _orderInventoryCoordination = orderInventoryCoordination;
             _menuInventoryCoordination = inventoryMenuCoordinator;
@@ -153,6 +176,7 @@ namespace PointOfSaleSystem.ViewModels
                     item.IsAvailable = inventoryItem.IsAvailable;
                 }
             }
+            
        
             
             AddOrderLineItem = new RelayCommand<MenuItem>(AddNewOrderLineItemToOrder);
@@ -163,6 +187,7 @@ namespace PointOfSaleSystem.ViewModels
             DeleteOrderItemCommand = new RelayCommand(DeleteOrderLineItemFromOrder);
             LogoutCommand = new RelayCommand(Logout);
             NavigateToOpenOrdersCommand = new RelayCommand(NavigateToOpenOrders);
+            NavigateToManagerPanelCommand = new RelayCommand(NavigateToManagerPanel);
             
         }
 
@@ -258,6 +283,10 @@ namespace PointOfSaleSystem.ViewModels
             // Desserts
             _menuInventoryCoordination.CreateInventoryForMenuItem("Chocolate Milkshake", 3.99m, "Dessert", 40);
             _menuInventoryCoordination.CreateInventoryForMenuItem("Vanilla Milkshake", 3.99m, "Dessert", 1);
+            _userService.CreateUser("Manager", "Test", "manager", 4323);
+            var manager = _userService.GetUserByPin(4323);
+            _userService.UpdateUserRole(manager.UserId, "Manager");
+
         }
 
         public void Logout()
@@ -309,6 +338,11 @@ namespace PointOfSaleSystem.ViewModels
                 _orderService.DeleteOrder(CurrentOrder.OrderId);
             }
             _navigationService.Navigate<OpenOrdersScreenViewModel>();
+        }
+
+        public void NavigateToManagerPanel()
+        {
+            _navigationService.Navigate<ManagerPanelScreenViewModel>();  
         }
 
 

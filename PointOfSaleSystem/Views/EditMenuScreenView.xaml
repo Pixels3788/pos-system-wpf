@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="PointOfSaleSystem.Views.EditMenuScreenView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" 
+             d:DesignWidth="1600">
+
+    <Grid Background="#F5F5F5">
+
+        <Grid Margin="40">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            
+            <TextBlock Text="Add / Edit Menu Items"
+                       FontSize="36"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,30"/>
+
+            
+            <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="20" Margin="0,0,0,20">
+                <StackPanel>
+                    <TextBlock Text="Add New Menu Item" FontSize="24" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="Name" FontWeight="Bold"/>
+                    <TextBox Width="300" MinHeight="40" Margin="0,0,0,10" Text="{Binding NewItemName}" />
+
+                    <TextBlock Text="Price" FontWeight="Bold"/>
+                    <TextBox Width="300" MinHeight="40" Margin="0,0,0,10" Text="{Binding NewItemPrice}" />
+
+                    <TextBlock Text="Category" FontWeight="Bold"/>
+                    <ComboBox ItemsSource="{Binding Categories}" Width="300" MinHeight="40" Margin="0,0,0,10" 
+                              SelectedItem="{Binding NewItemCategory}">
+                       
+                    </ComboBox>
+
+                    <TextBlock Text="Quantity" FontWeight="Bold"/>
+                    <TextBox Width="300" MinHeight="40" Margin="0,0,0,10" Text="{Binding NewItemQuantity}" />
+
+
+                    <ui:Button Content="Save Item"
+                               HorizontalAlignment="Left"
+                               Padding="20,10"
+                               Command="{Binding SaveItemCommand}"
+                               Width="150"/>
+                </StackPanel>
+            </Border>
+
+            
+            <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="20">
+                <DataGrid ItemsSource="{Binding MenuItems}"
+                          SelectedItem="{Binding SelectedMenuItem}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="False"
+                          Margin="0"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          SelectionMode="Single">
+
+                    <DataGrid.Columns>
+
+                        
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding ItemId}"
+                                            IsReadOnly="True"
+                                            Width="*"/>
+
+                        
+                        <DataGridTextColumn Header="Name"
+                                            Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="2*"/>
+
+                        
+                        <DataGridTextColumn Header="Price"
+                                            Binding="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=C}"
+                                            Width="*"/>
+
+                        
+                        <DataGridTextColumn Header="Category"
+                                            Binding="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Width="*"/>
+
+                        
+                        <DataGridCheckBoxColumn Header="Active"
+                                                Binding="{Binding IsAvailable, Mode=TwoWay}"
+                                                Width="*"/>
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+            </Border>
+
+            
+            <Grid Grid.Row="3" Margin="0,30,0,0">
+                <ui:Button Content="← Back to Manager Panel"
+                           FontSize="18"
+                           Padding="20,10"
+                           HorizontalAlignment="Left"
+                           Command="{Binding NavigateBackCommand}"/>
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,117 @@
+﻿<UserControl x:Class="PointOfSaleSystem.Views.ManagerPanelScreen"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:PointOfSaleSystem.Views"
+             xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1600">
+    <Grid Background="#F5F5F5">
+        
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            
+            <TextBlock Text="Manager Panel"
+                       FontSize="36"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,30"/>
+
+            
+            <Grid Grid.Row="1"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                
+                <Border Grid.Row="0" Grid.Column="0"
+                        Margin="15"
+                        Padding="25"
+                        Background="White"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        >
+
+                    <ui:Button Content="Inventory Editor"
+                               FontSize="20"
+                               Height="120"
+                               Command="{Binding NavigateToInventoryEditorCommand}"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"/>
+                </Border>
+
+                
+                <Border Grid.Row="0" Grid.Column="1"
+                        Margin="15"
+                        Padding="25"
+                        Background="White"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        >
+
+                    <ui:Button Content="Add / Edit Menu Items"
+                               FontSize="20"
+                               Height="120"
+                               Command="{Binding NavigateToMenuEditorCommand}"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"/>
+                </Border>
+
+                
+                <Border Grid.Row="0" Grid.Column="2"
+                        Margin="15"
+                        Padding="25"
+                        Background="White"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        >
+
+                    <ui:Button Content="View System Logs"
+                               FontSize="20"
+                               Height="120"
+                               Command="{Binding NavigateToLogsCommand}"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"/>
+                </Border>
+
+                
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                        Margin="15"
+                        Padding="25"
+                        Background="White"
+                        CornerRadius="10"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch">
+
+                    <ui:Button Content="← Back"
+                               FontSize="20"
+                               Height="120"
+                               Command="{Binding NavigateBackCommand}"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"/>
+                </Border>
+
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>

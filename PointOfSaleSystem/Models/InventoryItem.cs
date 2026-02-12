@@ -16,10 +16,12 @@ namespace PointOfSaleSystem.Models
 
         public int MenuItemId { get; set; }
 
+        public string MenuItemName => MenuItem?.Name ?? string.Empty;
+
         public int QuantityOnHand
         {
             get { return _quantityOnHand; }
-            private set
+            set
             {
                 if (_quantityOnHand != value)
                 {

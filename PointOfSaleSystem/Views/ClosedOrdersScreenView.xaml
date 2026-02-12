@@ -7,21 +7,19 @@
              xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1600">
-    <Grid Background="White" Margin="10">
+    <Grid Background="White" Margin="15">
 
-        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
-            
             <ColumnDefinition Width="3*" />
-           
         </Grid.ColumnDefinitions>
 
         
-        <Border Margin="5"
-                Padding="10"
-                Background="#FFF0F0F0"
-                CornerRadius="5">
+        <Border Grid.Column="0"
+                Margin="5"
+                Padding="15"
+                Background="#FFF5F5F5"
+                CornerRadius="8">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -30,32 +28,33 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                
                 <TextBlock Text="Closed Orders"
-                           FontSize="22"
+                           FontSize="24"
                            FontWeight="Bold"
-                           Margin="0,0,0,10"/>
+                           Margin="0,0,0,15"/>
 
+                
                 <ListView Grid.Row="1"
                           ItemsSource="{Binding ClosedOrders}"
                           SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
-                          FontSize="16"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch">
+                          HorizontalContentAlignment="Stretch"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Order #"
                                             DisplayMemberBinding="{Binding OrderId}"
-                                            Width="Auto"/>
+                                            Width="100"/>
                             <GridViewColumn Header="Created"
                                             DisplayMemberBinding="{Binding CreatedAt}"
-                                            Width="Auto"/>
+                                            Width="150"/>
                             <GridViewColumn Header="Closed"
                                             DisplayMemberBinding="{Binding FinalizedAt}"
-                                            Width="Auto"/>
+                                            Width="150"/>
                             <GridViewColumn Header="Total"
-                                            DisplayMemberBinding="{Binding OrderTotal}"
-                                            Width="Auto"/>
+                                            DisplayMemberBinding="{Binding OrderTotal, StringFormat=C}"
+                                            Width="100"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -64,61 +63,58 @@
                 <ui:Button Grid.Row="2"
                            Content="← Back to Open Orders"
                            Height="45"
-                           Margin="0,10,0,0"
+                           Margin="0,15,0,0"
                            Command="{Binding NavigateToOpenOrdersCommand}" />
             </Grid>
         </Border>
 
+
         
         <Border Grid.Column="1"
                 Margin="5"
-                Padding="10"
-                Background="#FFF0F0F0"
-                CornerRadius="5">
+                Padding="15"
+                Background="#FFF5F5F5"
+                CornerRadius="8">
 
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    
                     <RowDefinition Height="*"/>
-                    
                     <RowDefinition Height="Auto"/>
-                    
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 
                 <StackPanel Orientation="Horizontal"
-                            Margin="0,0,0,10">
+                            Margin="0,0,0,15">
                     <TextBlock Text="Order #"
-                               FontSize="20"
+                               FontSize="22"
                                FontWeight="Bold"/>
                     <TextBlock Text="{Binding SelectedOrder.OrderId}"
-                               FontSize="20"
+                               FontSize="22"
                                Margin="10,0,0,0"/>
                 </StackPanel>
 
                 
                 <ListView Grid.Row="1"
                           ItemsSource="{Binding SelectedOrder.LineOrder}"
-                          FontSize="16"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
+                          HorizontalContentAlignment="Stretch"
                           ScrollViewer.VerticalScrollBarVisibility="Auto">
 
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Item"
                                             DisplayMemberBinding="{Binding NameAtSale}"
-                                            Width="Auto"/>
+                                            Width="200"/>
                             <GridViewColumn Header="Unit Price"
-                                            DisplayMemberBinding="{Binding UnitPrice}"
-                                            Width="Auto"/>
+                                            DisplayMemberBinding="{Binding UnitPrice, StringFormat=C}"
+                                            Width="120"/>
                             <GridViewColumn Header="Qty"
                                             DisplayMemberBinding="{Binding Quantity}"
-                                            Width="Auto"/>
+                                            Width="80"/>
                             <GridViewColumn Header="Line Total"
-                                            DisplayMemberBinding="{Binding LineTotal}"
-                                            Width="Auto"/>
+                                            DisplayMemberBinding="{Binding LineTotal, StringFormat=C}"
+                                            Width="120"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -126,9 +122,9 @@
                 
                 <Border Grid.Row="2"
                         Background="White"
-                        CornerRadius="5"
-                        Padding="10"
-                        Margin="0,10,0,0">
+                        CornerRadius="8"
+                        Padding="15"
+                        Margin="0,15,0,10">
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -143,15 +139,47 @@
 
                             <TextBlock Text="Closed:"
                                        FontWeight="Bold"
-                                       Margin="0,5,0,0"/>
+                                       Margin="0,8,0,0"/>
                             <TextBlock Text="{Binding SelectedOrder.FinalizedAt}"/>
                         </StackPanel>
 
                         <TextBlock Grid.Column="1"
                                    Text="{Binding SelectedOrder.OrderTotal, StringFormat=C}"
-                                   FontSize="22"
+                                   FontSize="26"
                                    FontWeight="Bold"
                                    VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                
+                <Border Grid.Row="3"
+                        Background="White"
+                        CornerRadius="8"
+                        Padding="15">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="Today's Earnings"
+                                       FontWeight="Bold"
+                                       FontSize="16"/>
+                            <TextBlock Text="{Binding TodaysEarnings, StringFormat=C}"
+                                       FontSize="20"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Lifetime Earnings"
+                                       FontWeight="Bold"
+                                       FontSize="16"/>
+                            <TextBlock Text="{Binding LifeTimeEarnings, StringFormat=C}"
+                                       FontSize="20"
+                                       Margin="0,5,0,0"/>
+                        </StackPanel>
                     </Grid>
                 </Border>
 
