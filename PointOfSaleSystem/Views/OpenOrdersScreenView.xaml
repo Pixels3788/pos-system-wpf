@@ -9,17 +9,15 @@
              d:DesignHeight="900" d:DesignWidth="1600">
     <Grid Background="White" Margin="10">
 
-        <!-- Main Grid: Left Orders List, Right Details -->
+        
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
-            <!-- Orders List -->
+            
             <ColumnDefinition Width="3*"/>
-            <!-- Details -->
+            
         </Grid.ColumnDefinitions>
 
-        <!-- ============================== -->
-        <!-- LEFT SIDE – OPEN ORDERS LIST  -->
-        <!-- ============================== -->
+        
         <Border Margin="5" Padding="10" Background="#FFF0F0F0" CornerRadius="5">
             <Grid>
                 <Grid.RowDefinitions>
@@ -40,7 +38,8 @@
                         <GridView>
                             <GridViewColumn Header="Order #" DisplayMemberBinding="{Binding OrderId}" Width="Auto"/>
                             <GridViewColumn Header="Created" DisplayMemberBinding="{Binding CreatedAt}" Width="Auto"/>
-                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding OrderTotal}" Width="Auto"/>
+                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding OrderTotal, StringFormat=C}" Width="Auto"/>
+                            <GridViewColumn Header="Total After Tax" DisplayMemberBinding="{Binding TotalAfterTax, StringFormat=C}" Width="Auto"/>
                         </GridView>
                     </ListView.View>
 
@@ -86,20 +85,35 @@
                     </ListView.View>
                 </ListView>
 
-                
+
                 <Border Grid.Row="2" Background="White" CornerRadius="5" Padding="10" Margin="0,10,0,0">
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Order Total:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="1" Text="{Binding SelectedOrder.OrderTotal, StringFormat=C}" FontSize="22" FontWeight="Bold"/>
+                        
+                        <TextBlock Text="Order Total:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedOrder.OrderTotal, StringFormat=C}" FontSize="22" FontWeight="Bold"/>
+
+                        
+                        <TextBlock Text="Total After Tax:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedOrder.TotalAfterTax, StringFormat=C}" FontSize="22" FontWeight="Bold"/>
+
+                        
+                        <TextBlock Text="Change Due:" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ChangeDue, StringFormat=C}" FontSize="22" FontWeight="Bold"/>
+
                     </Grid>
                 </Border>
 
-                
+
                 <Border Grid.Row="3" Background="White" CornerRadius="5" Padding="10" Margin="0,10,0,0">
                     <Grid>
                         <Grid.RowDefinitions>

@@ -26,7 +26,7 @@ namespace PointOfSaleSystem.ViewModels
                 decimal sum = 0m;
                 foreach (var item in _closedOrders.Where(o => o.CreatedAt.Date == DateTime.Today))
                 {
-                    sum += item.OrderTotal;
+                    sum += item.TotalAfterTax;
                 }
                 return sum;
             }
@@ -40,7 +40,7 @@ namespace PointOfSaleSystem.ViewModels
                 decimal sum = 0m;
                 foreach (var item in _closedOrders)
                 {
-                    sum += item.OrderTotal;
+                    sum += item.TotalAfterTax;
                 }
                 return sum;
             }

@@ -90,6 +90,7 @@
                         
                         <DataGridTextColumn Header="Category"
                                             Binding="{Binding Category, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            IsReadOnly="True"
                                             Width="*"/>
 
                         
@@ -109,6 +110,11 @@
                            Padding="20,10"
                            HorizontalAlignment="Left"
                            Command="{Binding NavigateBackCommand}"/>
+                <ui:Button Content="Save Changes"
+                           FontSize="18"
+                           Padding="20,10"
+                           HorizontalAlignment="Right"
+                           Command="{Binding SaveChangesCommand}"/>
             </Grid>
 
         </Grid>

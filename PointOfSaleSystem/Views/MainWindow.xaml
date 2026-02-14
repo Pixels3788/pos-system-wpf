@@ -6,16 +6,18 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
     mc:Ignorable="d"
+    
     Title="Point Of Sale"  d:DesignHeight="900" d:DesignWidth="1600">
 
     <ui:FluentWindow.Content>
-    <Grid Background="LightGray">
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+            <ui:TitleBar/>
 
-        <ContentControl Grid.Row="1"
+            <ContentControl Grid.Row="1"
                         Content="{Binding CurrentViewModel}"/>
     
 

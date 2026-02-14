@@ -144,7 +144,7 @@
                         </StackPanel>
 
                         <TextBlock Grid.Column="1"
-                                   Text="{Binding SelectedOrder.OrderTotal, StringFormat=C}"
+                                   Text="{Binding SelectedOrder.TotalAfterTax, StringFormat=C}"
                                    FontSize="26"
                                    FontWeight="Bold"
                                    VerticalAlignment="Center"/>

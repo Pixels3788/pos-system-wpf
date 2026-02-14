@@ -18,5 +18,7 @@ namespace PointOfSaleSystem.Services.Interfaces
         MenuItem? GetItemById(int itemId);
 
         MenuItem? UpdateItemPrice(int itemId, decimal newPrice);
+
+        MenuItem? UpdateItemName(int itemId, string newName);
     }
 }

@@ -18,6 +18,8 @@ namespace PointOfSaleSystem.Models
 
         public decimal OrderTotal { get => LineOrder.Sum(item => item.LineTotal); }
 
+        public decimal TotalAfterTax { get => Math.Round(OrderTotal * 1.08m, 2); }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public DateTime? FinalizedAt { get; set; }

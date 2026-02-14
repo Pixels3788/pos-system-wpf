@@ -69,6 +69,7 @@ namespace PointOfSaleSystem.ViewModels
             {
                 foreach (var item in InventoryItems)
                 {
+                    SelectedInventoryItem = item;
                     _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
                 }
             }

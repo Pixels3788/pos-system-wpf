@@ -29,7 +29,7 @@ namespace PointOfSaleSystem.ViewModels
             } 
             else
             {
-                CurrentOrder = _orderService.CreateNewOrder();
+                
                 CurrentOrderLineItems = new ObservableCollection<OrderLineItem>();
             }
 
@@ -106,6 +106,11 @@ namespace PointOfSaleSystem.ViewModels
                 return sum;
            }
         }
+
+        public decimal TotalAfterTax
+        {
+            get => OrderTotal * 1.08m;
+        }
         
 
         private OrderLineItem _selectedOrderItem;
@@ -126,14 +131,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public Order? CurrentOrder
         {
-            get
-            {
-                if (_currentOrder == null)
-                {
-                    _currentOrder = _orderService.CreateNewOrder();
-                }
-                return _currentOrder;
-            }
+            get => _currentOrder;
             set
             {
                 SetProperty(ref _currentOrder, value);
@@ -183,7 +181,7 @@ namespace PointOfSaleSystem.ViewModels
             SeedMenuItemsCommand = new RelayCommand(SeedMenuItems);
             _currentOrderLineItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(OrderTotal));
             SendOrderCommand = new RelayCommand(SendOrder);
-            CancelOrderCommand = new RelayCommand(CancelOrder); 
+            CancelOrderCommand = new RelayCommand(CancelOrder, () => CurrentOrder != null); 
             DeleteOrderItemCommand = new RelayCommand(DeleteOrderLineItemFromOrder);
             LogoutCommand = new RelayCommand(Logout);
             NavigateToOpenOrdersCommand = new RelayCommand(NavigateToOpenOrders);
@@ -193,6 +191,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public void AddNewOrderLineItemToOrder(MenuItem menuItem) 
         {
+            if (CurrentOrder == null)
+            {
+                CurrentOrder = _orderService.CreateNewOrder();
+            }
+
             bool updated = false;
 
             foreach(var item in _currentOrderLineItems)
@@ -210,6 +213,7 @@ namespace PointOfSaleSystem.ViewModels
 
                     CurrentOrderLineItems = new ObservableCollection<OrderLineItem>(_orderService.GetOrderLineItemsByOrder(CurrentOrder.OrderId));
                     OnPropertyChanged(nameof(OrderTotal));
+                    OnPropertyChanged(nameof(TotalAfterTax));
                     updated = true;
                     break;
                 }
@@ -226,6 +230,7 @@ namespace PointOfSaleSystem.ViewModels
                         menuItem.IsAvailable = inventoryItem.IsAvailable;
                     }
                     OnPropertyChanged(nameof(OrderTotal));
+                    OnPropertyChanged(nameof(TotalAfterTax));
                 }
             }
         }
@@ -247,6 +252,7 @@ namespace PointOfSaleSystem.ViewModels
 
             CurrentOrderLineItems.Remove(SelectedOrderItem);
             OnPropertyChanged(nameof(OrderTotal));
+            OnPropertyChanged(nameof(TotalAfterTax));
         }
 
         public void SeedMenuItems()
@@ -291,10 +297,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public void Logout()
         {
-            if (CurrentOrderLineItems.Count <= 0)
-            {
-                _orderService.DeleteOrder(CurrentOrder.OrderId);
-            }
+            
             
             _navigationService.Navigate<LoginScreenViewModel>();
             
@@ -302,9 +305,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public void SendOrder()
         {
-            CurrentOrder = _orderService.CreateNewOrder();
+            if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
+            CurrentOrder = null;
             CurrentOrderLineItems.Clear();
             OnPropertyChanged(nameof(OrderTotal));
+            OnPropertyChanged(nameof(TotalAfterTax));
         }
 
         public void CancelOrder()
@@ -326,17 +331,15 @@ namespace PointOfSaleSystem.ViewModels
             }
 
             _orderService.DeleteOrder(CurrentOrder.OrderId);
-            CurrentOrder = _orderService.CreateNewOrder();
+            CurrentOrder = null;
             CurrentOrderLineItems.Clear();
             OnPropertyChanged(nameof(OrderTotal));
+            OnPropertyChanged(nameof(TotalAfterTax));
         }
 
         public void NavigateToOpenOrders()
         {
-            if (CurrentOrder != null && CurrentOrderLineItems.Count <= 0)
-            {
-                _orderService.DeleteOrder(CurrentOrder.OrderId);
-            }
+            
             _navigationService.Navigate<OpenOrdersScreenViewModel>();
         }
 

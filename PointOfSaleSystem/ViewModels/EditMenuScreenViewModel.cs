@@ -102,6 +102,8 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveItemCommand { get; }
 
+        public ICommand SaveChangesCommand { get; }
+
         public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator)
         {
             _navigationService = navigationService;
@@ -118,6 +120,7 @@ namespace PointOfSaleSystem.ViewModels
             };
             NavigateBackCommand = new RelayCommand(NavigateBack);
             SaveItemCommand = new RelayCommand(SaveItem);   
+            SaveChangesCommand = new RelayCommand(SaveChanges);
         }
 
         public void NavigateBack()
@@ -147,6 +150,19 @@ namespace PointOfSaleSystem.ViewModels
 
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
             OnPropertyChanged(nameof(MenuItems));
+        }
+
+        public void SaveChanges()
+        {
+            if (SelectedMenuItem != null)
+            {
+                foreach (var item in MenuItems)
+                {
+                    SelectedMenuItem = item;
+                    _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
+                    _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
+                }
+            }
         }
     }
 }

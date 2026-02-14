@@ -6,59 +6,66 @@
              xmlns:local="clr-namespace:PointOfSaleSystem.Views"
              xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui" 
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="1600">
-    <Grid Background="White">
-        
+             d:DesignHeight="900" d:DesignWidth="1600"
+             Background="#F4F6F8">
+
+    <Grid Margin="10">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            
             <RowDefinition Height="*"/>
-            
             <RowDefinition Height="Auto"/>
-            
         </Grid.RowDefinitions>
 
         
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" Grid.Row="0">
-            <ui:Button Command="{Binding NavigateToOpenOrdersCommand}" Content="View Open Orders" Margin="5" MinWidth="120" MinHeight="60"/>
-            <ui:Button Command="{Binding LogoutCommand}" Content="Logout" Margin="5" MinWidth="120" MinHeight="60"/>
-            <ui:Button Command="{Binding SeedMenuItemsCommand}" Content="Generate Menu Items" Margin="5" MinWidth="120" MinHeight="60"/>
-            <ui:Button Command="{Binding NavigateToManagerPanelCommand}" IsEnabled="{Binding IsManager}" Content="Open Manager Panel" Margin="5" MinWidth="120" MinHeight="60"/>
+            <ui:Button Command="{Binding NavigateToOpenOrdersCommand}" Content="View Open Orders"
+                       Margin="5" MinWidth="140" MinHeight="50" Background="#4A90E2" Foreground="White"/>
+            <ui:Button Command="{Binding LogoutCommand}" Content="Logout"
+                       Margin="5" MinWidth="140" MinHeight="50" Background="#E74C3C" Foreground="White"/>
+            <ui:Button Command="{Binding SeedMenuItemsCommand}" Content="Generate Menu Items"
+                       Margin="5" MinWidth="140" MinHeight="50" Background="#4A90E2" Foreground="White"/>
+            <ui:Button Command="{Binding NavigateToManagerPanelCommand}" IsEnabled="{Binding IsManager}" 
+                       Content="Open Manager Panel" Margin="5" MinWidth="160" MinHeight="50" Background="#27AE60" Foreground="White"/>
         </StackPanel>
 
         
         <Grid Grid.Row="1" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
-                
                 <ColumnDefinition Width="3*"/>
-                
             </Grid.ColumnDefinitions>
 
             
-            <Border Background="#FFF0F0F0" CornerRadius="5" Padding="10" Margin="5">
+            <Border Background="#FFFFFF" CornerRadius="5" Padding="10" Margin="5" BorderBrush="#D1D5DB" BorderThickness="1">
                 <DockPanel LastChildFill="True">
+
                     
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                        <TextBlock Text="Total: " FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding OrderTotal, StringFormat=C}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,10,0,0">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock Text="Total: " FontSize="18" FontWeight="Bold" Foreground="#2C3E50"/>
+                            <TextBlock Text="{Binding OrderTotal, StringFormat=C}" FontSize="18" FontWeight="Bold" Margin="5,0,0,0" Foreground="#2C3E50"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                            <TextBlock Text="Total After Tax: " FontSize="18" FontWeight="Bold" Foreground="#2C3E50"/>
+                            <TextBlock Text="{Binding TotalAfterTax, StringFormat=C}" FontSize="18" FontWeight="Bold" Margin="5,0,0,0" Foreground="#2C3E50"/>
+                        </StackPanel>
                     </StackPanel>
 
                     
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                        <ListView ItemsSource="{Binding CurrentOrderLineItems}" 
-                                  SelectedItem="{Binding SelectedOrderItem, Mode=TwoWay}"
-                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                  MinHeight="200">
+                        <ListView ItemsSource="{Binding CurrentOrderLineItems}" SelectedItem="{Binding SelectedOrderItem, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MinHeight="200" Background="#F9FAFB">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding NameAtSale}" />
-                                    <GridViewColumn Header="Unit Price" Width="150" DisplayMemberBinding="{Binding UnitPrice}" />
-                                    <GridViewColumn Header="Quantity" Width="150" DisplayMemberBinding="{Binding Quantity}" />
+                                    <GridViewColumn Header="Item Name" Width="200" DisplayMemberBinding="{Binding NameAtSale}"/>
+                                    <GridViewColumn Header="Unit Price" Width="150" DisplayMemberBinding="{Binding UnitPrice}"/>
+                                    <GridViewColumn Header="Quantity" Width="150" DisplayMemberBinding="{Binding Quantity}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
                     </ScrollViewer>
+
                 </DockPanel>
             </Border>
 
@@ -69,12 +76,9 @@
                         <DataTemplate>
                             <ui:Button Content="{Binding Name}" 
                                        IsEnabled="{Binding IsAvailable}"
-                                       Margin="5"
-                                       MinWidth="120"
-                                       MinHeight="60"
-                                       FontSize="16"
-                                       Command="{Binding DataContext.AddOrderLineItem,
-                                       RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                       Margin="5" MinWidth="120" MinHeight="60" FontSize="16"
+                                       Background="#4A90E2" Foreground="White"
+                                       Command="{Binding DataContext.AddOrderLineItem, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                        CommandParameter="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -90,10 +94,14 @@
 
         
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10" Grid.Row="2">
-            <ui:Button Command="{Binding DeleteOrderItemCommand}" Content="Delete Item" Margin="5" MinWidth="150" MinHeight="40"/>
-            <ui:Button Command="{Binding SendOrderCommand}"  Content="Send Order" Margin="5" MinWidth="150" MinHeight="40"/>
-            <ui:Button Command="{Binding CancelOrderCommand}" Content="Cancel Order" Margin="5" MinWidth="150" MinHeight="40"/>
+            <ui:Button Content="Send Order" Command="{Binding SendOrderCommand}"
+                       Margin="5" MinWidth="140" MinHeight="60" Background="#27AE60" Foreground="White"/>
+            <ui:Button Content="Cancel Order" Command="{Binding CancelOrderCommand}"
+                       Margin="5" MinWidth="140" MinHeight="60" Background="#E74C3C" Foreground="White"/>
+            <ui:Button Content="Delete Selected Item" Command="{Binding DeleteOrderItemCommand}"
+                       Margin="5" MinWidth="180" MinHeight="60" Background="#E74C3C" Foreground="White"/>
         </StackPanel>
+
     </Grid>
 </UserControl>
     

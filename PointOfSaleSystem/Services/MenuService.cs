@@ -95,5 +95,23 @@ namespace PointOfSaleSystem.Services
 
             return GetItemById(itemId);
         }
+
+        public MenuItem? UpdateItemName(int itemId, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName)) return null;
+
+            using var connection = _dbManager.GetConnection();
+
+            var updatedItem = GetItemById(itemId);
+
+            if (updatedItem == null) return null;
+
+            connection.Execute(
+                "UPDATE MenuItems SET Name = @NewName WHERE ItemId = @ItemId",
+                new {NewName = newName, ItemId = itemId }
+            );
+
+            return GetItemById(itemId);
+        }
     }
 }

@@ -10,6 +10,8 @@
     <Application.Resources>
 
         <ResourceDictionary>
+
+            
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Light" />
                 
@@ -18,7 +20,6 @@
 
             <DataTemplate DataType="{x:Type vm:LoginScreenViewModel}">
                 <views:LoginScreenView />
-                
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:CreateNewUserViewModel}">
                 <views:CreateNewUserScreen />
@@ -41,8 +42,14 @@
             <DataTemplate DataType="{x:Type vm:EditMenuScreenViewModel}">
                 <views:EditMenuScreenView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:UserEditorScreenViewModel}">
+                <views:UserEditorScreenView />
+            </DataTemplate>
+
             
+
         </ResourceDictionary>
        
+
     </Application.Resources>
 </Application>

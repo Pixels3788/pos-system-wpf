@@ -6,9 +6,10 @@
              xmlns:local="clr-namespace:PointOfSaleSystem.Views"
              xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
              mc:Ignorable="d"
-             d:DesignHeight="900" d:DesignWidth="1600">
+             d:DesignHeight="900" d:DesignWidth="1600"
+             Background="#F4F6F8">
 
-    <Grid Background="LightBlue">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -22,26 +23,37 @@
         </Grid.ColumnDefinitions>
 
         
-        <ui:Card Grid.Row="1" Grid.Column="1" Padding="20" MaxWidth="400" MinWidth="300">
+        <ui:Card Grid.Row="1" Grid.Column="1"
+                 Padding="30"
+                 MaxWidth="400" MinWidth="300"
+                 Background="White">
+
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
                 
                 <TextBlock Text="{Binding PinInput}" 
                            FontSize="36" 
+                           FontWeight="SemiBold"
                            HorizontalAlignment="Center" 
                            TextAlignment="Center"
                            MinWidth="180"
                            Height="50"
-                           Margin="0,0,0,15"/>
+                           Margin="0,0,0,15"
+                           Foreground="#2C3E50"
+                           Background="#ECF0F1"
+                           TextWrapping="Wrap"
+                           Padding="10"/>
 
                 
                 <TextBlock Text="{Binding LoginMessage}" 
                            FontSize="16"
                            HorizontalAlignment="Center"
                            TextAlignment="Center"
-                           Margin="0,0,0,20"/>
+                           Margin="0,0,0,20"
+                           Foreground="#E74C3C"
+                           FontWeight="Bold"/>
 
-                <!-- Keypad Grid -->
+                
                 <Grid Width="250" Height="250" Margin="0,0,0,20">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
@@ -55,44 +67,59 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Row 1 -->
-                    <ui:Button Content="1" Command="{Binding EnterDigitCommand}" CommandParameter="1" Margin="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    
+                    <ui:Button Content="1" Command="{Binding EnterDigitCommand}" CommandParameter="1" Margin="2" 
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="2" Command="{Binding EnterDigitCommand}" CommandParameter="2" Margin="2" Grid.Column="1"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="3" Command="{Binding EnterDigitCommand}" CommandParameter="3" Margin="2" Grid.Column="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
 
                     
                     <ui:Button Content="4" Command="{Binding EnterDigitCommand}" CommandParameter="4" Margin="2" Grid.Row="1"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="5" Command="{Binding EnterDigitCommand}" CommandParameter="5" Margin="2" Grid.Row="1" Grid.Column="1"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="6" Command="{Binding EnterDigitCommand}" CommandParameter="6" Margin="2" Grid.Row="1" Grid.Column="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
 
                     
                     <ui:Button Content="7" Command="{Binding EnterDigitCommand}" CommandParameter="7" Margin="2" Grid.Row="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="8" Command="{Binding EnterDigitCommand}" CommandParameter="8" Margin="2" Grid.Row="2" Grid.Column="1"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="9" Command="{Binding EnterDigitCommand}" CommandParameter="9" Margin="2" Grid.Row="2" Grid.Column="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
 
-                    
+                   
                     <ui:Button Content="Del" Command="{Binding DeleteDigitCommand}" Margin="2" Grid.Row="3"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#E74C3C" Foreground="White"/>
                     <ui:Button Content="0" Command="{Binding EnterDigitCommand}" CommandParameter="0" Margin="2" Grid.Row="3" Grid.Column="1"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#4A90E2" Foreground="White"/>
                     <ui:Button Content="Enter" Command="{Binding AttemptLoginCommand}" Margin="2" Grid.Row="3" Grid.Column="2"
-                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Background="#27AE60" Foreground="White"/>
                 </Grid>
 
                 
                 <ui:Button Command="{Binding OpenCreationMenuCommand}" 
                            Content="Create A New User" 
                            Width="250" Height="40"
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Center"
+                           Background="#4A90E2"
+                           Foreground="White"
+                           FontWeight="SemiBold"/>
             </StackPanel>
         </ui:Card>
     </Grid>

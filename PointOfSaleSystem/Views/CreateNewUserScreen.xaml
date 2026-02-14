@@ -6,40 +6,59 @@
              xmlns:local="clr-namespace:PointOfSaleSystem.Views"
              xmlns:ui="clr-namespace:Wpf.Ui.Controls;assembly=Wpf.Ui"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="1600">
-    <Grid Background="White">
+             d:DesignHeight="900" d:DesignWidth="1600"
+             Background="#F4F6F8">
+
+    <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        
-        
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
 
-            <TextBlock Text="Create New User"
-                       FontSize="30"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,20"/>
+        
+        <ui:Card Grid.Column="1" Padding="30" Background="White" MaxWidth="600" MinWidth="400">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-            <TextBlock Text="{Binding CreationMessage}"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
-                       TextAlignment="Center"
-                       Margin="0,0,0,15"/>
-
-            <ui:TextBox Text="{Binding FirstName}" PlaceholderText="First Name" Margin="0,0,0,15"  MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
-            <ui:TextBox Text="{Binding LastName}" PlaceholderText="Last Name" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
-            <ui:TextBox Text="{Binding UserEmail}" PlaceholderText="Email" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
-            <ui:TextBox Text="{Binding UserPin}" PlaceholderText="Pin" Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"/>
-            <ui:Button Content="Create User" Command="{Binding CreateUserCommand}" FontSize="25"  Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch">
                 
-                
-            </ui:Button>
-            <ui:Button Content="Back To Login Screen" Command="{Binding NavigateToLoginCommand}" FontSize="25"  Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch" />
-        </StackPanel>
+                <TextBlock Text="Create New User"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           Foreground="#2C3E50"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,20"/>
 
+                
+                <TextBlock Text="{Binding CreationMessage}"
+                           FontSize="16"
+                           Foreground="#E74C3C"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           Margin="0,0,0,20"/>
+
+                
+                <ui:TextBox Text="{Binding FirstName}" PlaceholderText="First Name" 
+                            Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"
+                            Background="#ECF0F1" Foreground="#2C3E50" Padding="10"/>
+                <ui:TextBox Text="{Binding LastName}" PlaceholderText="Last Name" 
+                            Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"
+                            Background="#ECF0F1" Foreground="#2C3E50" Padding="10"/>
+                <ui:TextBox Text="{Binding UserEmail}" PlaceholderText="Email" 
+                            Margin="0,0,0,15" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"
+                            Background="#ECF0F1" Foreground="#2C3E50" Padding="10"/>
+                <ui:TextBox Text="{Binding UserPin}" PlaceholderText="Pin" 
+                            Margin="0,0,0,20" MinHeight="40" MinWidth="500" HorizontalAlignment="Stretch"
+                            Background="#ECF0F1" Foreground="#2C3E50" Padding="10"/>
+
+                
+                <ui:Button Content="Create User" Command="{Binding CreateUserCommand}" FontSize="20"
+                           Margin="0,0,0,15" MinHeight="45" MinWidth="500" HorizontalAlignment="Stretch"
+                           Background="#4A90E2" Foreground="White" FontWeight="SemiBold"/>
+                <ui:Button Content="Back To Login Screen" Command="{Binding NavigateToLoginCommand}" FontSize="20"
+                           Margin="0,0,0,15" MinHeight="45" MinWidth="500" HorizontalAlignment="Stretch"
+                           Background="#27AE60" Foreground="White" FontWeight="SemiBold"/>
+
+            </StackPanel>
+        </ui:Card>
     </Grid>
 </UserControl>

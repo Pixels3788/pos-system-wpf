@@ -41,6 +41,7 @@ namespace PointOfSaleSystem.ViewModels
             get => _selectedOrder;
             set
             {
+                
                 SetProperty(ref _selectedOrder, value);
             }
         }
@@ -64,6 +65,17 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _lifetimeEarnings, value);
+            }
+        }
+
+        private decimal _changeDue;
+
+        public decimal ChangeDue
+        {
+            get => _changeDue;
+            set
+            {
+                SetProperty(ref _changeDue, value);
             }
         }
 
@@ -127,8 +139,10 @@ namespace PointOfSaleSystem.ViewModels
                     return;
                 }
 
-                if (inputtedCash == SelectedOrder.OrderTotal)
+                if (inputtedCash == SelectedOrder.TotalAfterTax || inputtedCash > SelectedOrder.TotalAfterTax)
                 {
+                    ChangeDue = inputtedCash - SelectedOrder.TotalAfterTax;
+                    
                     _orderService.FinalizeOrder(SelectedOrder.OrderId);
                     OpenOrders.Remove(SelectedOrder);
                     CashReceived = "";
