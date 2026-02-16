@@ -21,6 +21,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IInventoryMenuCoordinator _inventoryMenuCoordinator;
 
+        private readonly IActionLogService _actionLogService;
+
         private ObservableCollection<MenuItem> _menuItems;
 
         public ObservableCollection<MenuItem> MenuItems
@@ -104,11 +106,12 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveChangesCommand { get; }
 
-        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator)
+        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IActionLogService actionLogService)
         {
             _navigationService = navigationService;
             _menuService = menuService;
             _inventoryMenuCoordinator = inventoryMenuCoordinator;
+            _actionLogService = actionLogService;
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
             _categories = new ObservableCollection<string>
             {
@@ -147,6 +150,7 @@ namespace PointOfSaleSystem.ViewModels
             if (string.IsNullOrWhiteSpace(NewItemCategory)) return;
 
              _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
 
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
             OnPropertyChanged(nameof(MenuItems));
@@ -162,6 +166,7 @@ namespace PointOfSaleSystem.ViewModels
                     _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
                     _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
                 }
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
             }
         }
     }

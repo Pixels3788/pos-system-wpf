@@ -24,6 +24,7 @@ namespace PointOfSaleSystem.Models
             UserId = userId;
             
         }
+        public ActionLog() { }
 
 
 

@@ -16,6 +16,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IUserService _userService;
 
+        private readonly IActionLogService _actionLogService;
+
         private string? _pinInput;
 
         public string? PinInput
@@ -47,10 +49,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand OpenCreationMenuCommand { get;  }
 
-        public LoginScreenViewModel(INavigationService navigationService, IUserService userService)
+        public LoginScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
         {
             _navigationService = navigationService;
             _userService = userService;
+            _actionLogService = actionLogService;
             AttemptLoginCommand = new RelayCommand(AttemptLogin, () => !string.IsNullOrEmpty(PinInput) && PinInput.Length >= 4 && PinInput.Length <= 6);
             EnterDigitCommand = new RelayCommand<string>(digit =>
             {
@@ -64,6 +67,7 @@ namespace PointOfSaleSystem.ViewModels
                     PinInput = PinInput[..^1];
             });
             OpenCreationMenuCommand = new RelayCommand(OpenUserCreationScreen);
+            _actionLogService = actionLogService;
         }
 
 
@@ -86,6 +90,7 @@ namespace PointOfSaleSystem.ViewModels
             {
                 LoginMessage = "Successful Login";
                 _navigationService.SetCurrentUser(loggedUser);
+                _actionLogService.CreateActionLog(loggedUser, "Logged in", $"{loggedUser.FirstName} Logged into the POS");
                 _navigationService.Navigate<OrderTakingScreenViewModel>();
             }
         }

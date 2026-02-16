@@ -45,6 +45,9 @@
             <DataTemplate DataType="{x:Type vm:UserEditorScreenViewModel}">
                 <views:UserEditorScreenView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:LogsScreenViewModel}">
+                <views:LogsScreenView />
+            </DataTemplate>
 
             
 

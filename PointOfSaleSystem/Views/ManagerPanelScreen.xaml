@@ -11,7 +11,7 @@
 
     <Grid Margin="10">
 
-        
+        <!-- Header -->
         <TextBlock Text="Manager Panel"
                    FontSize="36"
                    FontWeight="Bold"
@@ -19,19 +19,23 @@
                    Margin="0,0,0,30"
                    Foreground="#2C3E50"/>
 
-        
+        <!-- Main Button Grid -->
         <Grid Margin="0,80,0,0">
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            
+            <!-- Row 0 -->
+
             <Border Grid.Row="0" Grid.Column="0"
                     Margin="15"
                     Background="White"
@@ -48,7 +52,6 @@
                            VerticalAlignment="Stretch"/>
             </Border>
 
-            
             <Border Grid.Row="0" Grid.Column="1"
                     Margin="15"
                     Background="White"
@@ -65,7 +68,6 @@
                            VerticalAlignment="Stretch"/>
             </Border>
 
-            
             <Border Grid.Row="0" Grid.Column="2"
                     Margin="15"
                     Background="White"
@@ -82,8 +84,27 @@
                            VerticalAlignment="Stretch"/>
             </Border>
 
-           
-            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+            <!-- Row 1 - System Logs -->
+
+            <Border Grid.Row="1" Grid.Column="1"
+                    Margin="15"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20">
+                <ui:Button Content="System Logs"
+                           FontSize="22"
+                           FontWeight="SemiBold"
+                           Background="#4A90E2"
+                           Foreground="White"
+                           Command="{Binding NavigateToLogsCommand}"
+                           Height="120"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"/>
+            </Border>
+
+            <!-- Row 2 - Back -->
+
+            <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
                     Margin="15"
                     Background="White"
                     CornerRadius="12"

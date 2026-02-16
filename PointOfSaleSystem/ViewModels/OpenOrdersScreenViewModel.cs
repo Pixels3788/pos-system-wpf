@@ -21,6 +21,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IOrderInventoryCoordination _orderInventoryCoordination;
 
+        private readonly IActionLogService _actionLogService;
+
         private ObservableCollection<Order> _openOrders;
 
         public ObservableCollection<Order> OpenOrders
@@ -89,11 +91,12 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToFinalizedOrdersCommand { get; }
 
-        public OpenOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService, IOrderInventoryCoordination orderInventoryCoordination)
+        public OpenOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService, IOrderInventoryCoordination orderInventoryCoordination, IActionLogService actionLogService)
         {
             _navigationService = navigationService;
             _orderService = orderService;
             _orderInventoryCoordination = orderInventoryCoordination;
+            _actionLogService = actionLogService;
             _openOrders = new ObservableCollection<Order>(_orderService.GetOpenOrders());
             _selectedOrder = new Order();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
@@ -101,6 +104,7 @@ namespace PointOfSaleSystem.ViewModels
             FinalizeOrderCommand = new RelayCommand(FinalizeOrder);
             EditOrderCommand = new RelayCommand(EditOrder);
             NavigateToFinalizedOrdersCommand = new RelayCommand(NavigateToFinalizedOrders);
+            
         }
 
         public void NavigateToOrderScreen()
@@ -120,6 +124,7 @@ namespace PointOfSaleSystem.ViewModels
                 {
                     _orderInventoryCoordination.IncrementOnDeletion(orderItem);
                 }
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Cancelled Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {SelectedOrder.OrderId} which was worth a total of ${SelectedOrder.TotalAfterTax}");
                 _orderService.DeleteOrder(SelectedOrder.OrderId);
                 OpenOrders.Remove(SelectedOrder);
             }
@@ -142,8 +147,8 @@ namespace PointOfSaleSystem.ViewModels
                 if (inputtedCash == SelectedOrder.TotalAfterTax || inputtedCash > SelectedOrder.TotalAfterTax)
                 {
                     ChangeDue = inputtedCash - SelectedOrder.TotalAfterTax;
-                    
                     _orderService.FinalizeOrder(SelectedOrder.OrderId);
+                    _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Finalized Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} finalized order {SelectedOrder.OrderId} by receiving ${inputtedCash} as payment and dispensing ${ChangeDue} in change back to the customer");
                     OpenOrders.Remove(SelectedOrder);
                     CashReceived = "";
                 }
@@ -156,6 +161,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public void EditOrder()
         {
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
             _navigationService.Navigate<OrderTakingScreenViewModel>(SelectedOrder);
 
         }

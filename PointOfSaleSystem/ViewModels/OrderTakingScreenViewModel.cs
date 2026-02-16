@@ -52,6 +52,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IUserService _userService;
 
+        private readonly IActionLogService _actionLogService;
+
         private ObservableCollection<MenuItem> _menuItems; 
 
         public ObservableCollection<MenuItem> MenuItems
@@ -154,7 +156,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToManagerPanelCommand { get; }
 
-        public OrderTakingScreenViewModel(IUserService userService, INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService)
+        public OrderTakingScreenViewModel(IUserService userService, INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService, IActionLogService actionLogService)
         {
             _userService = userService;
             _navigationService = navigationService;
@@ -163,6 +165,7 @@ namespace PointOfSaleSystem.ViewModels
             _orderService = orderService;
             _menuService = menuService;
             _inventoryService = inventoryService;
+            _actionLogService = actionLogService;
             _currentOrderLineItems = new ObservableCollection<OrderLineItem>();
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
             foreach (var item in _menuItems)
@@ -297,15 +300,14 @@ namespace PointOfSaleSystem.ViewModels
 
         public void Logout()
         {
-            
-            
-            _navigationService.Navigate<LoginScreenViewModel>();
-            
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
+            _navigationService.Navigate<LoginScreenViewModel>();   
         }
 
         public void SendOrder()
         {
             if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
             CurrentOrder = null;
             CurrentOrderLineItems.Clear();
             OnPropertyChanged(nameof(OrderTotal));
@@ -329,6 +331,7 @@ namespace PointOfSaleSystem.ViewModels
                     }
                 }
             }
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
 
             _orderService.DeleteOrder(CurrentOrder.OrderId);
             CurrentOrder = null;
@@ -345,6 +348,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateToManagerPanel()
         {
+            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
             _navigationService.Navigate<ManagerPanelScreenViewModel>();  
         }
 

@@ -16,6 +16,7 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IUserService _userService;
         private readonly INavigationService _navigationService;
+        private readonly IActionLogService _actionLogService;
 
         private string? _firstName;
         
@@ -81,13 +82,15 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToLoginCommand { get; }
 
-        public CreateNewUserViewModel(INavigationService navigationService, IUserService userService)
+        public CreateNewUserViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
         {
             _userService = userService;
             _navigationService = navigationService;
+            _actionLogService = actionLogService;
             CreateUserCommand = new RelayCommand(CreateUser, () => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)
                                                 && !string.IsNullOrWhiteSpace(UserEmail) && !string.IsNullOrWhiteSpace(UserPin));
             NavigateToLoginCommand = new RelayCommand(BackToLogin);
+            _actionLogService = actionLogService;
         }
 
         public void CreateUser()
@@ -111,6 +114,7 @@ namespace PointOfSaleSystem.ViewModels
             }
             else
             {
+                _actionLogService.CreateActionLog(newUser, "Account Creation", $"A new account was created for {newUser.FirstName} {newUser.LastName}");
                 CreationMessage = "User Creation Succeeded! User has been registered";
             }
         }

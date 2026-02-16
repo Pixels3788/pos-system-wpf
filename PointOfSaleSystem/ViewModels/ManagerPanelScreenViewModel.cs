@@ -25,6 +25,8 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToUserEditorCommand { get; }
 
+        public ICommand NavigateToLogsCommand { get; }
+
         public ManagerPanelScreenViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
@@ -32,6 +34,7 @@ namespace PointOfSaleSystem.ViewModels
             NavigateBackCommand = new RelayCommand(NavigateBack);
             NavigateToMenuEditorCommand = new RelayCommand(NavigateToMenuEditor);
             NavigateToUserEditorCommand = new RelayCommand(NavigateToUserEditor);
+            NavigateToLogsCommand = new RelayCommand(NavigateToLogs);
         }
 
         public void NavigateToInventoryEditor()
@@ -52,6 +55,11 @@ namespace PointOfSaleSystem.ViewModels
         public void NavigateToUserEditor()
         {
             _navigationService.Navigate<UserEditorScreenViewModel>();
+        }
+
+        public void NavigateToLogs()
+        {
+            _navigationService.Navigate<LogsScreenViewModel>();
         }
 
     }

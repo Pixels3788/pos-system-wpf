@@ -19,6 +19,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IUserService _userService;
 
+        private readonly IActionLogService _actionLogService;
+
         private ObservableCollection<User> _users;
 
         public ObservableCollection<User> Users
@@ -49,10 +51,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveChangesCommand { get; }
 
-        public UserEditorScreenViewModel(INavigationService navigationService, IUserService userService)
+        public UserEditorScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
         {
             _navigationService = navigationService;
             _userService = userService;
+            _actionLogService = actionLogService;
             _users = new ObservableCollection<User>(_userService.LoadUsers());
             NavigateBackCommand = new RelayCommand(NavigateBack);
             PromoteUserCommand = new RelayCommand(PromoteUser);
@@ -68,6 +71,7 @@ namespace PointOfSaleSystem.ViewModels
         public void PromoteUser()
         {
             if (_selectedUser != null) {
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
                 _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
                 Users = new ObservableCollection<User>(_userService.LoadUsers());
                 
@@ -78,6 +82,7 @@ namespace PointOfSaleSystem.ViewModels
         {
             if (_selectedUser != null)
             {
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
                 _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
                 Users = new ObservableCollection<User>(_userService.LoadUsers());
             }
@@ -93,6 +98,8 @@ namespace PointOfSaleSystem.ViewModels
                     _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
                     _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
                 }
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
+
             }
         }
     }

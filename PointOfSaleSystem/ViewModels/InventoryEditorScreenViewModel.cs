@@ -22,6 +22,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IInventoryService _inventoryService;
 
+        private readonly IActionLogService _actionLogService;
+
         private ObservableCollection<InventoryItem> _inventoryItems;
 
         public ObservableCollection<InventoryItem> InventoryItems
@@ -48,14 +50,16 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveInventoryCommand { get; }
 
-        public InventoryEditorScreenViewModel(IInventoryMenuCoordinator menuCoordinator, INavigationService navigationService, IInventoryService inventoryService)
+        public InventoryEditorScreenViewModel(IInventoryMenuCoordinator menuCoordinator, INavigationService navigationService, IInventoryService inventoryService, IActionLogService actionLogService)
         {
             _menuCoordinator = menuCoordinator;
             _navigationService = navigationService;
             _inventoryService = inventoryService;
+            _actionLogService = actionLogService;
             _inventoryItems = new ObservableCollection<InventoryItem>(_menuCoordinator.ReconstructInventoryItems());
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
             SaveInventoryCommand = new RelayCommand(SaveInventory);
+            
         }
 
         public void NavigateToOrderScreen()
@@ -72,6 +76,7 @@ namespace PointOfSaleSystem.ViewModels
                     SelectedInventoryItem = item;
                     _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
                 }
+                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
             }
         }
     }
