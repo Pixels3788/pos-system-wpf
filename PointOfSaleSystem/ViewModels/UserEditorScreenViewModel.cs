@@ -51,6 +51,8 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveChangesCommand { get; }
 
+        public ICommand DeleteUserCommand { get; }
+
         public UserEditorScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
         {
             _navigationService = navigationService;
@@ -61,6 +63,7 @@ namespace PointOfSaleSystem.ViewModels
             PromoteUserCommand = new RelayCommand(PromoteUser);
             DemoteUserCommand = new RelayCommand(DemoteUser);
             SaveChangesCommand = new RelayCommand(SaveChanges);
+            DeleteUserCommand = new RelayCommand(DeleteUser);
         }
 
         public void NavigateBack()
@@ -100,6 +103,15 @@ namespace PointOfSaleSystem.ViewModels
                 }
                 _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
 
+            }
+        }
+
+        public void DeleteUser()
+        {
+            if (_selectedUser != null)
+            {
+                _userService.DeleteUser(SelectedUser.UserId);
+                Users.Remove(SelectedUser);
             }
         }
     }

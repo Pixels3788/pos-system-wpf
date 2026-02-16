@@ -110,6 +110,11 @@
                            Padding="20,10"
                            HorizontalAlignment="Left"
                            Command="{Binding NavigateBackCommand}"/>
+                <ui:Button Content="Delete Menu Item"
+                           FontSize="18"
+                           Padding="20,10"
+                           HorizontalAlignment="Center"
+                           Command="{Binding DeleteMenuItemCommand}" />
                 <ui:Button Content="Save Changes"
                            FontSize="18"
                            Padding="20,10"

@@ -107,7 +107,11 @@
                                Margin="0,0,15,0"
                                Command="{Binding PromoteUserCommand}"
                                CommandParameter="{Binding SelectedUser}"/>
-                    
+                    <ui:Button Content="Delete User"
+                               Padding="20,10"
+                               Margin="0,0,15,0"
+                               Command="{Binding DeleteUserCommand}"/>
+
                     <ui:Button Content="Save Changes"
                                Padding="20,10"
                                Command="{Binding SaveChangesCommand}"/>

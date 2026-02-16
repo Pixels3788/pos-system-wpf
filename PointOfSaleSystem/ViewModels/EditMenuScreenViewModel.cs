@@ -19,6 +19,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IMenuService _menuService;
 
+        private readonly IInventoryService _inventoryService;
+
         private readonly IInventoryMenuCoordinator _inventoryMenuCoordinator;
 
         private readonly IActionLogService _actionLogService;
@@ -106,10 +108,13 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveChangesCommand { get; }
 
-        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IActionLogService actionLogService)
+        public ICommand DeleteMenuItemCommand { get; }
+
+        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IActionLogService actionLogService, IInventoryService inventoryService)
         {
             _navigationService = navigationService;
             _menuService = menuService;
+            _inventoryService = inventoryService;
             _inventoryMenuCoordinator = inventoryMenuCoordinator;
             _actionLogService = actionLogService;
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
@@ -124,6 +129,7 @@ namespace PointOfSaleSystem.ViewModels
             NavigateBackCommand = new RelayCommand(NavigateBack);
             SaveItemCommand = new RelayCommand(SaveItem);   
             SaveChangesCommand = new RelayCommand(SaveChanges);
+            DeleteMenuItemCommand = new RelayCommand(DeleteMenuItem);
         }
 
         public void NavigateBack()
@@ -168,6 +174,16 @@ namespace PointOfSaleSystem.ViewModels
                 }
                 _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
             }
+        }
+
+        public void DeleteMenuItem()
+        {
+            if (SelectedMenuItem != null)
+            {
+                _menuService.DeleteMenuItem(SelectedMenuItem.ItemId);
+                _menuItems.Remove(SelectedMenuItem);
+            }
+                
         }
     }
 }

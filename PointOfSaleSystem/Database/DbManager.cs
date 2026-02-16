@@ -114,7 +114,7 @@ namespace PointOfSaleSystem.Database
                     InventoryItemId INTEGER PRIMARY KEY AUTOINCREMENT,
                     QuantityOnHand INTEGER NOT NULL,
                     MenuItemId INTEGER NOT NULL,
-                    FOREIGN KEY(MenuItemId) REFERENCES MenuItems(ItemId)
+                    FOREIGN KEY(MenuItemId) REFERENCES MenuItems(ItemId) ON DELETE CASCADE
                 );";
             command.ExecuteNonQuery();
 
@@ -125,7 +125,7 @@ namespace PointOfSaleSystem.Database
                     UserId INTEGER NOT NULL,
                     Description TEXT NOT NULL,
                     Timestamp TEXT NOT NULL,
-                    FOREIGN KEY(UserId) REFERENCES Users(UserId)
+                    FOREIGN KEY(UserId) REFERENCES Users(UserId) ON DELETE CASCADE
                 );";
             command.ExecuteNonQuery();
         }
