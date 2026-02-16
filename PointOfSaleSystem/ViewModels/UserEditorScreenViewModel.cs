@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Collections.ObjectModel;
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -58,14 +59,33 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService = navigationService;
             _userService = userService;
             _actionLogService = actionLogService;
-            _users = new ObservableCollection<User>(_userService.LoadUsers());
+            _users = new ObservableCollection<User>();
             NavigateBackCommand = new RelayCommand(NavigateBack);
             PromoteUserCommand = new RelayCommand(PromoteUser);
             DemoteUserCommand = new RelayCommand(DemoteUser);
             SaveChangesCommand = new RelayCommand(SaveChanges);
             DeleteUserCommand = new RelayCommand(DeleteUser);
+            LoadUsers();
         }
 
+        public async void LoadUsers()
+        {
+            try
+            {
+                var users = await _userService.LoadUsers();
+
+                Users.Clear();
+                foreach (var user in users)
+                {
+                    Users.Add(user);
+                }
+                Log.Information("Loaded {Count} users in the viewmodel", users.Count);
+            }
+            catch (Exception ex) 
+            {
+                Log.Error(ex, "Error loading users in viewmodel");
+            }
+        }
         public void NavigateBack()
         {
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
@@ -75,8 +95,8 @@ namespace PointOfSaleSystem.ViewModels
         {
             if (_selectedUser != null) {
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
-                _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
-                Users = new ObservableCollection<User>(_userService.LoadUsers());
+                await _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
+                LoadUsers();
                 
             }
         }
@@ -86,8 +106,8 @@ namespace PointOfSaleSystem.ViewModels
             if (_selectedUser != null)
             {
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
-                _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
-                Users = new ObservableCollection<User>(_userService.LoadUsers());
+                await _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
+                LoadUsers();
             }
         }
 
@@ -98,19 +118,19 @@ namespace PointOfSaleSystem.ViewModels
                 foreach (var user in _users) 
                 {
                     SelectedUser = user;
-                    _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
-                    _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
+                    await _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
+                    await _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
                 }
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
 
             }
         }
 
-        public void DeleteUser()
+        public async void DeleteUser()
         {
             if (_selectedUser != null)
             {
-                _userService.DeleteUser(SelectedUser.UserId);
+                await _userService.DeleteUser(SelectedUser.UserId);
                 Users.Remove(SelectedUser);
             }
         }

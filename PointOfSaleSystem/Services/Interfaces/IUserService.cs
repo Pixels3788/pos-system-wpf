@@ -8,21 +8,21 @@ namespace PointOfSaleSystem.Services.Interfaces
     public interface IUserService
     {
 
-        User? CreateUser(string firstName, string lastName, string email, int pin);
+        Task<User?> CreateUser(string firstName, string lastName, string email, int pin);
 
-        User? GetUserById(int userId);
+        Task<User?> GetUserById(int userId);
 
-        User? GetUserByPin(int pin);
+        Task<User?> GetUserByPin(int pin);
 
-        void DeleteUser(int userId);
+        Task DeleteUser(int userId);
 
-        User? UpdateUserPin(int userId, int pin);
+        Task<User?> UpdateUserPin(int userId, int pin);
 
-        User? UpdateUserEmail(int userId, string email);
+        Task<User?> UpdateUserEmail(int userId, string email);
 
-        User? UpdateUserRole(int userId, string role);
+        Task<User?> UpdateUserRole(int userId, string role);
 
-        List<User> LoadUsers();
+        Task<List<User>> LoadUsers();
 
     }
 }

@@ -105,7 +105,7 @@ namespace PointOfSaleSystem.ViewModels
                 return;
             }
 
-            User? newUser = _userService.CreateUser(FirstName, LastName, UserEmail, newPin);
+            User? newUser = await _userService.CreateUser(FirstName, LastName, UserEmail, newPin);
 
             if (newUser == null)
             {

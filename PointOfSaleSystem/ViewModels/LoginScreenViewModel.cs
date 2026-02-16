@@ -78,7 +78,7 @@ namespace PointOfSaleSystem.ViewModels
             {
                 return;
             }
-            User? loggedUser = _userService.GetUserByPin(inputtedPin);
+            User? loggedUser = await _userService.GetUserByPin(inputtedPin);
 
             if (loggedUser == null) 
             {

@@ -258,7 +258,7 @@ namespace PointOfSaleSystem.ViewModels
             OnPropertyChanged(nameof(TotalAfterTax));
         }
 
-        public void SeedMenuItems()
+        public async void SeedMenuItems()
         {
             _menuInventoryCoordination.CreateInventoryForMenuItem("Classic Burger", 5.99m, "Food", 50);
             _menuInventoryCoordination.CreateInventoryForMenuItem("Cheeseburger", 6.49m, "Food", 50);
@@ -292,9 +292,9 @@ namespace PointOfSaleSystem.ViewModels
             // Desserts
             _menuInventoryCoordination.CreateInventoryForMenuItem("Chocolate Milkshake", 3.99m, "Dessert", 40);
             _menuInventoryCoordination.CreateInventoryForMenuItem("Vanilla Milkshake", 3.99m, "Dessert", 1);
-            _userService.CreateUser("Manager", "Test", "manager", 4323);
-            var manager = _userService.GetUserByPin(4323);
-            _userService.UpdateUserRole(manager.UserId, "Manager");
+            await _userService.CreateUser("Manager", "Test", "manager", 4323);
+            var manager = await _userService.GetUserByPin(4323);
+            await _userService.UpdateUserRole(manager.UserId, "Manager");
 
         }
 
