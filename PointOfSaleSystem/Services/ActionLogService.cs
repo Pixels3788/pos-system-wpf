@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Controls.Primitives;
 using PointOfSaleSystem.Database.Interfaces;
+using Microsoft.Data.Sqlite;
+using System.Threading.Tasks;
+using Serilog;
 
 namespace PointOfSaleSystem.Services
 {
@@ -20,57 +23,137 @@ namespace PointOfSaleSystem.Services
             _dbManager = dbManager;
         }
 
-        public ActionLog? CreateActionLog(User user, string action, string description)
+        public async Task<ActionLog?> CreateActionLog(User user, string action, string description)
         {
 
-            if (user == null) return null;
+            if (user == null)
+            {
+                Log.Warning("CreateActionLog Failed: User is null");
+                return null;
+            }
+            if (string.IsNullOrWhiteSpace(action))
+            {
+                Log.Warning("CreateActionLog failed: Action is empty for user {UserId}", user?.UserId);
+                return null;
+            }
 
-            if (string.IsNullOrWhiteSpace(action)) return null;
-            
-            ActionLog newLog = new ActionLog(user.UserId, action, description);
-            newLog.Timestamp = DateTime.Now;
 
-            using var connection = _dbManager.GetConnection();
+            try
+            {
+                ActionLog newLog = new ActionLog(user.UserId, action, description);
+                newLog.Timestamp = DateTime.Now;
 
-            string addNewLog = "INSERT INTO ActionLogs (Action, UserId, Description, Timestamp) VALUES (@Action, @UserId, @Description, @Timestamp);" +
-                               "SELECT last_insert_rowid();" ;
+                using var connection = _dbManager.GetConnection();
 
-            newLog.LogId = connection.ExecuteScalar<int>(addNewLog, newLog);
+                string addNewLog = "INSERT INTO ActionLogs (Action, UserId, Description, Timestamp) VALUES (@Action, @UserId, @Description, @Timestamp);" +
+                                   "SELECT last_insert_rowid();";
 
-            return newLog;
+                newLog.LogId = await connection.ExecuteScalarAsync<int>(addNewLog, newLog);
+
+                Log.Information("Action log created: {LogId} - User {UserId} - {Action}", newLog.LogId, user.UserId, action);
+
+                return newLog;
+            }
+            catch (SqliteException ex)
+            {
+                Log.Error(ex, "Unexpected error creating action log for user {UserId}", user.UserId);
+
+                return null;
+            }
+            catch (Exception ex) 
+            {
+                Log.Error(ex, "Unexpected Error creating action log for user {UserId}", user.UserId);
+                return null;
+            }
 
         }
 
-        public void DeleteActionLog(int logId)
+        public async Task DeleteActionLog(int logId)
         {
-            if (logId <= 0) return;
-            using var connection = _dbManager.GetConnection();
+            if (logId <= 0)
+            {
+                Log.Warning("Log Deletion Failed: Log ID {LogId} does not exist", logId);
+                return;
+            }
+            try
+            {
+                using var connection = _dbManager.GetConnection();
 
-            connection.Execute(
-                "DELETE FROM ActionLogs WHERE LogId = @LogId", new {LogId = logId}
-            );
+                await connection.ExecuteAsync(
+                    "DELETE FROM ActionLogs WHERE LogId = @LogId", new { LogId = logId }
+                );
+
+                Log.Information("Action log deleted: {LogId}", logId);
+            }
+            catch (SqliteException ex)
+            {
+                Log.Error(ex, "Unexpected database error deleting action log {LogId}", logId);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error deleting action log {LogId}", logId);
+                return;
+            }
         }
 
-        public List<ActionLog> GetActionLogs()
+        public async Task<List<ActionLog>> GetActionLogs()
         {
-            using var connection = _dbManager.GetConnection();
+            try
+            {
+                using var connection = _dbManager.GetConnection();
 
-            string getActionLogs = "SELECT LogId, Action, UserId, Description, Timestamp FROM ActionLogs";
+                string getActionLogs = "SELECT LogId, Action, UserId, Description, Timestamp FROM ActionLogs";
 
-            var retrievedLogs = connection.Query<ActionLog>(getActionLogs).ToList();
+                var retrievedLogs = await connection.QueryAsync<ActionLog>(getActionLogs);
 
-            return retrievedLogs;
+                var logList = retrievedLogs.ToList();
+
+                Log.Information("Retrieved {Count} action logs", logList.Count);
+
+                return logList;
+            }
+            catch (SqliteException ex)
+            {
+                Log.Error(ex, "Unexpected Database error fetching action logs");
+                return new List<ActionLog>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error fetching action logs");
+                return new List<ActionLog>();
+            }
         }
 
-        public ActionLog? GetLogById(int logId) 
+        public async Task<ActionLog?> GetLogById(int logId) 
         {
-            using var connection = _dbManager.GetConnection();
+            try
+            {
+                using var connection = _dbManager.GetConnection();
 
-            string getLogByIdQuery = "SELECT LogId, Action, UserId, Description, Timestamp FROM ActionLogs WHERE LogId = @LogId";
+                string getLogByIdQuery = "SELECT LogId, Action, UserId, Description, Timestamp FROM ActionLogs WHERE LogId = @LogId";
 
-            var retrievedLog = connection.QueryFirstOrDefault<ActionLog>(getLogByIdQuery, new { LogId = logId });
-
-            return retrievedLog;
+                var retrievedLog = await connection.QueryFirstOrDefaultAsync<ActionLog>(getLogByIdQuery, new { LogId = logId });
+                if (retrievedLog != null)
+                {
+                    Log.Information("successfully retrieved action log {LogId} from the database", logId);
+                }
+                else
+                {
+                    Log.Warning("Action log {LogId} not found", logId);
+                }
+                return retrievedLog;
+            }
+            catch (SqliteException ex)
+            {
+                Log.Error(ex, "Unexpected database error while trying to retrieve action log {LogId}", logId);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error retrieving action log {LogId}", logId);
+                return null;
+            }
         }
 
     }

@@ -137,7 +137,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public void SaveItem()
+        public async void SaveItem()
         {
             if (!int.TryParse(_newItemQuantity, out int newItemQuantity))
             {
@@ -156,13 +156,13 @@ namespace PointOfSaleSystem.ViewModels
             if (string.IsNullOrWhiteSpace(NewItemCategory)) return;
 
              _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
 
             _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
             OnPropertyChanged(nameof(MenuItems));
         }
 
-        public void SaveChanges()
+        public async void SaveChanges()
         {
             if (SelectedMenuItem != null)
             {
@@ -172,7 +172,7 @@ namespace PointOfSaleSystem.ViewModels
                     _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
                     _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
                 }
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
             }
         }
 

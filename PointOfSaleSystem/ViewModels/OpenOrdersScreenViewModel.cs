@@ -116,7 +116,7 @@ namespace PointOfSaleSystem.ViewModels
         {
             _navigationService.Navigate<ClosedOrdersScreenViewModel>();
         }
-        public void CancelOrder()
+        public async void CancelOrder()
         {
             if (SelectedOrder != null)
             {
@@ -124,7 +124,7 @@ namespace PointOfSaleSystem.ViewModels
                 {
                     _orderInventoryCoordination.IncrementOnDeletion(orderItem);
                 }
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Cancelled Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {SelectedOrder.OrderId} which was worth a total of ${SelectedOrder.TotalAfterTax}");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Cancelled Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {SelectedOrder.OrderId} which was worth a total of ${SelectedOrder.TotalAfterTax}");
                 _orderService.DeleteOrder(SelectedOrder.OrderId);
                 OpenOrders.Remove(SelectedOrder);
             }
@@ -134,7 +134,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public void FinalizeOrder() 
+        public async void FinalizeOrder() 
         {
             if (_selectedOrder != null)
             {
@@ -148,7 +148,7 @@ namespace PointOfSaleSystem.ViewModels
                 {
                     ChangeDue = inputtedCash - SelectedOrder.TotalAfterTax;
                     _orderService.FinalizeOrder(SelectedOrder.OrderId);
-                    _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Finalized Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} finalized order {SelectedOrder.OrderId} by receiving ${inputtedCash} as payment and dispensing ${ChangeDue} in change back to the customer");
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Finalized Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} finalized order {SelectedOrder.OrderId} by receiving ${inputtedCash} as payment and dispensing ${ChangeDue} in change back to the customer");
                     OpenOrders.Remove(SelectedOrder);
                     CashReceived = "";
                 }
@@ -159,9 +159,9 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public void EditOrder()
+        public async void EditOrder()
         {
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
             _navigationService.Navigate<OrderTakingScreenViewModel>(SelectedOrder);
 
         }

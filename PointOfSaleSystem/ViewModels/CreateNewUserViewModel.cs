@@ -93,7 +93,7 @@ namespace PointOfSaleSystem.ViewModels
             _actionLogService = actionLogService;
         }
 
-        public void CreateUser()
+        public async void CreateUser()
         {
             if (_firstName == null) return;
             if (_lastName == null) return;
@@ -114,7 +114,7 @@ namespace PointOfSaleSystem.ViewModels
             }
             else
             {
-                _actionLogService.CreateActionLog(newUser, "Account Creation", $"A new account was created for {newUser.FirstName} {newUser.LastName}");
+                await _actionLogService.CreateActionLog(newUser, "Account Creation", $"A new account was created for {newUser.FirstName} {newUser.LastName}");
                 CreationMessage = "User Creation Succeeded! User has been registered";
             }
         }

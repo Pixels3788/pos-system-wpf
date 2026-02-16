@@ -10,6 +10,8 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using PointOfSaleSystem.Services.Interfaces;
 using System.Collections.ObjectModel;
+using Serilog;
+
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -36,8 +38,30 @@ namespace PointOfSaleSystem.ViewModels
         {
             _actionLogService = actionLogService;
             _navigationService = navigationService;
-            _logs = new ObservableCollection<ActionLog>(_actionLogService.GetActionLogs());
+            _logs = new ObservableCollection<ActionLog>();
             NavigateBackCommand = new RelayCommand(NavigateBack);
+
+            LoadLogs();
+        }
+
+        private async void LoadLogs()
+        {
+            try
+            {
+                var logs = await _actionLogService.GetActionLogs();
+
+                Logs.Clear();
+                foreach (var log in logs)
+                {
+                    Logs.Add(log);
+                }
+
+                Log.Information("Loaded {Count} actions logs", logs.Count);
+            }
+            catch (Exception ex) 
+            {
+                Log.Error(ex, "Error loading action logs in viewmodel");
+            }
         }
 
 

@@ -67,7 +67,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public void SaveInventory()
+        public async void SaveInventory()
         {
             if (SelectedInventoryItem != null)
             {
@@ -76,7 +76,7 @@ namespace PointOfSaleSystem.ViewModels
                     SelectedInventoryItem = item;
                     _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
                 }
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
             }
         }
     }

@@ -8,13 +8,13 @@ namespace PointOfSaleSystem.Services.Interfaces
     public interface IActionLogService
     {
 
-        ActionLog? CreateActionLog(User user, string action, string description);
+        Task<ActionLog?> CreateActionLog(User user, string action, string description);
 
-        void DeleteActionLog(int logId);
+        Task DeleteActionLog(int logId);
 
-        List<ActionLog> GetActionLogs();
+        Task<List<ActionLog>> GetActionLogs();
 
-        ActionLog? GetLogById(int logId);
+        Task<ActionLog?> GetLogById(int logId);
 
 
 

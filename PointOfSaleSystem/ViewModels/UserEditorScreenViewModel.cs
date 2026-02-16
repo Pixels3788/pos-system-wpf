@@ -71,27 +71,27 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public void PromoteUser()
+        public async void PromoteUser()
         {
             if (_selectedUser != null) {
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
                 _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
                 Users = new ObservableCollection<User>(_userService.LoadUsers());
                 
             }
         }
 
-        public void DemoteUser()
+        public async void DemoteUser()
         {
             if (_selectedUser != null)
             {
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
                 _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
                 Users = new ObservableCollection<User>(_userService.LoadUsers());
             }
         }
 
-        public void SaveChanges()
+        public async void SaveChanges()
         {
             if (SelectedUser != null)
             {
@@ -101,7 +101,7 @@ namespace PointOfSaleSystem.ViewModels
                     _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
                     _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
                 }
-                _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
 
             }
         }

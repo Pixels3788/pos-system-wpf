@@ -71,7 +71,7 @@ namespace PointOfSaleSystem.ViewModels
         }
 
 
-        public void AttemptLogin()
+        public async void AttemptLogin()
         {
             
             if (!int.TryParse(_pinInput, out int inputtedPin))
@@ -90,7 +90,7 @@ namespace PointOfSaleSystem.ViewModels
             {
                 LoginMessage = "Successful Login";
                 _navigationService.SetCurrentUser(loggedUser);
-                _actionLogService.CreateActionLog(loggedUser, "Logged in", $"{loggedUser.FirstName} Logged into the POS");
+                await _actionLogService.CreateActionLog(loggedUser, "Logged in", $"{loggedUser.FirstName} Logged into the POS");
                 _navigationService.Navigate<OrderTakingScreenViewModel>();
             }
         }

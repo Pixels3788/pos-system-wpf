@@ -314,7 +314,7 @@ namespace PointOfSaleSystem.ViewModels
             OnPropertyChanged(nameof(TotalAfterTax));
         }
 
-        public void CancelOrder()
+        public async void CancelOrder()
         {
             foreach (var item in CurrentOrderLineItems) 
             {
@@ -331,7 +331,7 @@ namespace PointOfSaleSystem.ViewModels
                     }
                 }
             }
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
 
             _orderService.DeleteOrder(CurrentOrder.OrderId);
             CurrentOrder = null;
@@ -346,9 +346,9 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<OpenOrdersScreenViewModel>();
         }
 
-        public void NavigateToManagerPanel()
+        public async void NavigateToManagerPanel()
         {
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
             _navigationService.Navigate<ManagerPanelScreenViewModel>();  
         }
 
