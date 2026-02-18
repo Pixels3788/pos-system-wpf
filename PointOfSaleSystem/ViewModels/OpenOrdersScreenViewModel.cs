@@ -101,9 +101,9 @@ namespace PointOfSaleSystem.ViewModels
             _openOrders = new ObservableCollection<Order>();
             _selectedOrder = new Order();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
-            CancelOrderCommand = new RelayCommand(CancelOrder);
-            FinalizeOrderCommand = new RelayCommand(FinalizeOrder);
-            EditOrderCommand = new RelayCommand(EditOrder);
+            CancelOrderCommand = new AsyncRelayCommand(CancelOrder);
+            FinalizeOrderCommand = new AsyncRelayCommand(FinalizeOrder);
+            EditOrderCommand = new AsyncRelayCommand(EditOrder);
             NavigateToFinalizedOrdersCommand = new RelayCommand(NavigateToFinalizedOrders);
             LoadOpenOrders();
             
@@ -138,7 +138,7 @@ namespace PointOfSaleSystem.ViewModels
         {
             _navigationService.Navigate<ClosedOrdersScreenViewModel>();
         }
-        public async void CancelOrder()
+        public async Task CancelOrder()
         {
             if (SelectedOrder != null)
             {
@@ -156,7 +156,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void FinalizeOrder() 
+        public async Task FinalizeOrder() 
         {
             if (_selectedOrder != null)
             {
@@ -181,7 +181,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void EditOrder()
+        public async Task EditOrder()
         {
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
             _navigationService.Navigate<OrderTakingScreenViewModel>(SelectedOrder);

@@ -58,7 +58,7 @@ namespace PointOfSaleSystem.ViewModels
             _actionLogService = actionLogService;
             _inventoryItems = new ObservableCollection<InventoryItem>();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
-            SaveInventoryCommand = new RelayCommand(SaveInventory);
+            SaveInventoryCommand = new AsyncRelayCommand(SaveInventory);
             LoadInventoryItems();
         }
 
@@ -86,7 +86,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public async void SaveInventory()
+        public async Task SaveInventory()
         {
             if (SelectedInventoryItem != null)
             {

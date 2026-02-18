@@ -174,15 +174,15 @@ namespace PointOfSaleSystem.ViewModels
             
        
             
-            AddOrderLineItem = new RelayCommand<MenuItem>(AddNewOrderLineItemToOrder);
-            SeedMenuItemsCommand = new RelayCommand(SeedMenuItems);
+            AddOrderLineItem = new AsyncRelayCommand<MenuItem>(AddNewOrderLineItemToOrder);
+            SeedMenuItemsCommand = new AsyncRelayCommand(SeedMenuItems);
             _currentOrderLineItems.CollectionChanged += (s, e) => OnPropertyChanged(nameof(OrderTotal));
-            SendOrderCommand = new RelayCommand(SendOrder);
-            CancelOrderCommand = new RelayCommand(CancelOrder, () => CurrentOrder != null); 
-            DeleteOrderItemCommand = new RelayCommand(DeleteOrderLineItemFromOrder);
-            LogoutCommand = new RelayCommand(Logout);
+            SendOrderCommand = new AsyncRelayCommand(SendOrder);
+            CancelOrderCommand = new AsyncRelayCommand(CancelOrder, () => CurrentOrder != null); 
+            DeleteOrderItemCommand = new AsyncRelayCommand(DeleteOrderLineItemFromOrder);
+            LogoutCommand = new AsyncRelayCommand(Logout);
             NavigateToOpenOrdersCommand = new RelayCommand(NavigateToOpenOrders);
-            NavigateToManagerPanelCommand = new RelayCommand(NavigateToManagerPanel);
+            NavigateToManagerPanelCommand = new AsyncRelayCommand(NavigateToManagerPanel);
             
         }
 
@@ -214,7 +214,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void AddNewOrderLineItemToOrder(MenuItem menuItem) 
+        public async Task AddNewOrderLineItemToOrder(MenuItem menuItem) 
         {
             if (CurrentOrder == null)
             {
@@ -260,7 +260,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void DeleteOrderLineItemFromOrder()
+        public async Task DeleteOrderLineItemFromOrder()
         {
             
             await _orderInventoryCoordination.IncrementOnDeletion(SelectedOrderItem);
@@ -280,7 +280,7 @@ namespace PointOfSaleSystem.ViewModels
             OnPropertyChanged(nameof(TotalAfterTax));
         }
 
-        public async void SeedMenuItems()
+        public async Task SeedMenuItems()
         {
             _menuInventoryCoordination.CreateInventoryForMenuItem("Classic Burger", 5.99m, "Food", 50);
             _menuInventoryCoordination.CreateInventoryForMenuItem("Cheeseburger", 6.49m, "Food", 50);
@@ -320,13 +320,13 @@ namespace PointOfSaleSystem.ViewModels
 
         }
 
-        public async void Logout()
+        public async Task Logout()
         {
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
             _navigationService.Navigate<LoginScreenViewModel>();   
         }
 
-        public async void SendOrder()
+        public async Task SendOrder()
         {
             if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
@@ -336,7 +336,7 @@ namespace PointOfSaleSystem.ViewModels
             OnPropertyChanged(nameof(TotalAfterTax));
         }
 
-        public async void CancelOrder()
+        public async Task CancelOrder()
         {
             foreach (var item in CurrentOrderLineItems) 
             {
@@ -368,7 +368,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<OpenOrdersScreenViewModel>();
         }
 
-        public async void NavigateToManagerPanel()
+        public async Task NavigateToManagerPanel()
         {
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
             _navigationService.Navigate<ManagerPanelScreenViewModel>();  

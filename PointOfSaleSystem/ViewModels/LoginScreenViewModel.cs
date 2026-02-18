@@ -28,7 +28,7 @@ namespace PointOfSaleSystem.ViewModels
                 if (SetProperty(ref _pinInput, value))
                 {
                     LoginMessage = string.Empty;
-                    ((RelayCommand)AttemptLoginCommand).RaiseCanExecuteChanged();
+                    ((AsyncRelayCommand)AttemptLoginCommand).RaiseCanExecuteChanged();
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService = navigationService;
             _userService = userService;
             _actionLogService = actionLogService;
-            AttemptLoginCommand = new RelayCommand(AttemptLogin, () => !string.IsNullOrEmpty(PinInput) && PinInput.Length >= 4 && PinInput.Length <= 6);
+            AttemptLoginCommand = new AsyncRelayCommand(AttemptLogin, () => !string.IsNullOrEmpty(PinInput) && PinInput.Length >= 4 && PinInput.Length <= 6);
             EnterDigitCommand = new RelayCommand<string>(digit =>
             {
                 if (PinInput == null) PinInput = string.Empty;
@@ -71,7 +71,7 @@ namespace PointOfSaleSystem.ViewModels
         }
 
 
-        public async void AttemptLogin()
+        public async Task AttemptLogin()
         {
             
             if (!int.TryParse(_pinInput, out int inputtedPin))

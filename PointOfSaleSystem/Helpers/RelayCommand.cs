@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace PointOfSaleSystem.Helpers
 {
@@ -71,6 +73,92 @@ namespace PointOfSaleSystem.Helpers
             CommandManager.InvalidateRequerySuggested();
         }
     }
+
+    internal class AsyncRelayCommand : ICommand
+    {
+        private readonly Func<Task> _taskFunc;
+
+        private readonly Func<bool> _canExecute;
+
+        public AsyncRelayCommand(Func<Task> task, Func<bool>? canExecute = null)
+        {
+            _taskFunc = task;
+            _canExecute = canExecute;
+        }
+
+        public async void Execute(object? parameter)
+        {
+            try
+            {
+                await _taskFunc();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occured while executing command {Command}", parameter);
+            }
+        }
+
+        public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
+
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    internal class AsyncRelayCommand<T> : ICommand
+    {
+        private readonly Func<T, Task> _taskFunc;
+        private readonly Func<T, bool>? _canExecute;
+
+        public AsyncRelayCommand(Func<T, Task> taskFunc, Func<T, bool>? canExecute = null)
+        {
+            _taskFunc = taskFunc;
+            _canExecute = canExecute;
+        }
+
+        public bool CanExecute(object? parameter)
+        {
+            if (parameter is not T t)
+                return _canExecute == null;
+
+            return _canExecute == null || _canExecute(t);
+        }
+
+        public async void Execute(object? parameter)
+        {
+            try
+            {
+                if (parameter is T t)
+                    await _taskFunc(t);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error while executing command {Command}", parameter);
+            }
+        }
+
+
+        public event EventHandler? CanExecuteChanged
+        {
+            add { CommandManager.RequerySuggested += value; }
+            remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
+    }
 }
+
+
 
 

@@ -87,13 +87,13 @@ namespace PointOfSaleSystem.ViewModels
             _userService = userService;
             _navigationService = navigationService;
             _actionLogService = actionLogService;
-            CreateUserCommand = new RelayCommand(CreateUser, () => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)
+            CreateUserCommand = new AsyncRelayCommand(CreateUser, () => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)
                                                 && !string.IsNullOrWhiteSpace(UserEmail) && !string.IsNullOrWhiteSpace(UserPin));
             NavigateToLoginCommand = new RelayCommand(BackToLogin);
             _actionLogService = actionLogService;
         }
 
-        public async void CreateUser()
+        public async Task CreateUser()
         {
             if (_firstName == null) return;
             if (_lastName == null) return;

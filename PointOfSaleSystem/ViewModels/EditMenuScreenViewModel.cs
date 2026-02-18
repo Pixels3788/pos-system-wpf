@@ -128,9 +128,9 @@ namespace PointOfSaleSystem.ViewModels
                 "Misc"
             };
             NavigateBackCommand = new RelayCommand(NavigateBack);
-            SaveItemCommand = new RelayCommand(SaveItem);   
-            SaveChangesCommand = new RelayCommand(SaveChanges);
-            DeleteMenuItemCommand = new RelayCommand(DeleteMenuItem);
+            SaveItemCommand = new AsyncRelayCommand(SaveItem);   
+            SaveChangesCommand = new AsyncRelayCommand(SaveChanges);
+            DeleteMenuItemCommand = new AsyncRelayCommand(DeleteMenuItem);
             LoadMenuItems();
         }
 
@@ -158,7 +158,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public async void SaveItem()
+        public async Task SaveItem()
         {
             if (!int.TryParse(_newItemQuantity, out int newItemQuantity))
             {
@@ -183,7 +183,7 @@ namespace PointOfSaleSystem.ViewModels
             OnPropertyChanged(nameof(MenuItems));
         }
 
-        public async void SaveChanges()
+        public async Task SaveChanges()
         {
             if (SelectedMenuItem != null)
             {
@@ -197,7 +197,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void DeleteMenuItem()
+        public async Task DeleteMenuItem()
         {
             if (SelectedMenuItem != null)
             {

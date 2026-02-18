@@ -61,10 +61,10 @@ namespace PointOfSaleSystem.ViewModels
             _actionLogService = actionLogService;
             _users = new ObservableCollection<User>();
             NavigateBackCommand = new RelayCommand(NavigateBack);
-            PromoteUserCommand = new RelayCommand(PromoteUser);
-            DemoteUserCommand = new RelayCommand(DemoteUser);
-            SaveChangesCommand = new RelayCommand(SaveChanges);
-            DeleteUserCommand = new RelayCommand(DeleteUser);
+            PromoteUserCommand = new AsyncRelayCommand(PromoteUser);
+            DemoteUserCommand = new AsyncRelayCommand(DemoteUser);
+            SaveChangesCommand = new AsyncRelayCommand(SaveChanges);
+            DeleteUserCommand = new AsyncRelayCommand(DeleteUser);
             LoadUsers();
         }
 
@@ -91,7 +91,7 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService.Navigate<ManagerPanelScreenViewModel>();
         }
 
-        public async void PromoteUser()
+        public async Task PromoteUser()
         {
             if (_selectedUser != null) {
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
@@ -101,7 +101,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void DemoteUser()
+        public async Task DemoteUser()
         {
             if (_selectedUser != null)
             {
@@ -111,7 +111,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void SaveChanges()
+        public async Task SaveChanges()
         {
             if (SelectedUser != null)
             {
@@ -126,7 +126,7 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public async void DeleteUser()
+        public async Task DeleteUser()
         {
             if (_selectedUser != null)
             {
