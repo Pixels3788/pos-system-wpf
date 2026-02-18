@@ -26,9 +26,9 @@ namespace PointOfSaleTests
         }
 
         [Fact]
-        public void UserCreation_ShouldReturnNewUser()
+        public async Task UserCreation_ShouldReturnNewUser()
         {
-            var newUser = _userService.CreateUser("Jacob", "Moore", "Pixels378@gmail.com", 1130);
+            var newUser = await _userService.CreateUser("Jacob", "Moore", "Pixels378@gmail.com", 1130);
 
             newUser.Should().NotBeNull();
 
@@ -41,94 +41,94 @@ namespace PointOfSaleTests
         [InlineData("yoyo", "mendez", "yoyo@gmail.com", 111)]
         [InlineData("Thomas", "Shereck", "tomsher@gmail.com", 1234567)]
         [InlineData("Ned", "Flanders", "NFlan@gmail.com", -4561)]
-        public void UserCreation_ShouldReturnNull(string firstName, string lastName, string email, int pin)
+        public async Task UserCreation_ShouldReturnNull(string firstName, string lastName, string email, int pin)
         {
-            var newUser = _userService.CreateUser(firstName, lastName, email, pin);
+            var newUser = await _userService.CreateUser(firstName, lastName, email, pin);
 
             newUser.Should().BeNull();
         } 
 
         [Fact]
-        public void GetUserById_ShouldReturnUser()
+        public async Task GetUserById_ShouldReturnUser()
         {
-            var newUser = _userService.CreateUser("sean", "griggs", "motha@gmail.com", 14435);
+            var newUser = await _userService.CreateUser("sean", "griggs", "motha@gmail.com", 14435);
 
             var newUserId = newUser.UserId;
 
-            var result = _userService.GetUserById(newUserId);
+            var result = await _userService.GetUserById(newUserId);
 
             result.Should().NotBeNull();
         }
 
         [Fact]
-        public void GetUserByPin_ShouldReturnUser()
+        public async Task GetUserByPin_ShouldReturnUser()
         {
-            var newUser = _userService.CreateUser("Jonathan", "O'Grady", "JGrady@gmail.com", 4632);
+            var newUser = await _userService.CreateUser("Jonathan", "O'Grady", "JGrady@gmail.com", 4632);
 
-            var result = _userService.GetUserByPin(4632);
+            var result = await _userService.GetUserByPin(4632);
 
             result.Should().NotBeNull();
         }
         [Fact]
-        public void DeleteUser_ShouldReturnNull()
+        public async Task DeleteUser_ShouldReturnNull()
         {
-            var newUser = _userService.CreateUser("Lucas", "Biggs", "LBiggs@gmail.com", 4566);
+            var newUser = await _userService.CreateUser("Lucas", "Biggs", "LBiggs@gmail.com", 4566);
 
             var userId = newUser.UserId;
 
-            _userService.DeleteUser(userId);
+            await _userService.DeleteUser(userId);
 
-            var result = _userService.GetUserById(userId);
+            var result = await _userService.GetUserById(userId);
 
             result.Should().BeNull();
         }
 
         [Fact]
-        public void UpdateUserPin_ShouldReturnUpdatedUser()
+        public async Task UpdateUserPin_ShouldReturnUpdatedUser()
         {
-            var newUser = _userService.CreateUser("Arianna", "Miller", "arimiller@gmail.com", 4312);
+            var newUser = await _userService.CreateUser("Arianna", "Miller", "arimiller@gmail.com", 4312);
 
             var userId = newUser.UserId;
 
-            var result = _userService.UpdateUserPin(userId, 4444);
+            var result = await _userService.UpdateUserPin(userId, 4444);
 
             result.Should().NotBeNull();
             result.UserPin.Should().Be(4444);
         }
 
         [Fact]
-        public void UpdateUserEmail_ShouldReturnUpdatedUser()
+        public async Task UpdateUserEmail_ShouldReturnUpdatedUser()
         {
-            var newUser = _userService.CreateUser("David", "White", "Dwhite072@gmail.com", 2098);
+            var newUser = await _userService.CreateUser("David", "White", "Dwhite072@gmail.com", 2098);
 
             var userId = newUser.UserId;
 
-            var result = _userService.UpdateUserEmail(userId, "Dwhite072@gmail.com");
+            var result = await _userService.UpdateUserEmail(userId, "Dwhite072@gmail.com");
 
             result.Should().NotBeNull();
             result.UserEmail.Should().Be("Dwhite072@gmail.com");
         }
 
         [Fact]
-        public void UpdateUserRole_ShouldReturnUpdatedUser()
+        public async Task UpdateUserRole_ShouldReturnUpdatedUser()
         {
-            var newUser = _userService.CreateUser("Mulan", "Mills", "MuMills@gmai.com", 2781);
+            var newUser = await _userService.CreateUser("Mulan", "Mills", "MuMills@gmai.com", 2781);
 
             var userId = newUser.UserId;
 
-            var result = _userService.UpdateUserRole(userId, "Manager");
+            var result = await _userService.UpdateUserRole(userId, "Manager");
 
             result.Should().NotBeNull();
             result.UserRole.Should().Be("Manager");
         }
 
         [Fact]
-        public void LoadUsers_ShouldReturnListOfUsers()
+        public async Task LoadUsers_ShouldReturnListOfUsers()
         {
-            var firstNewUser = _userService.CreateUser("Milan", "Mack", "MilMack@gmail.com", 4591);
-            var secondNewUser = _userService.CreateUser("Kadeem", "Carrey", "KadCar@gmail.com", 4999);
+            var firstNewUser = await _userService.CreateUser("Milan", "Mack", "MilMack@gmail.com", 4591);
+            var secondNewUser = await _userService.CreateUser("Kadeem", "Carrey", "KadCar@gmail.com", 4999);
 
-            var result = _userService.LoadUsers();
+            var result = await _userService.LoadUsers();
 
             result.Should().NotBeNull();
             result.Select(i => i.UserEmail).Should().Contain(new[] { "MilMack@gmail.com", "KadCar@gmail.com" });
@@ -141,11 +141,11 @@ namespace PointOfSaleTests
         [InlineData(-1245)]
         [InlineData(1761761)]
         [InlineData(12)]
-        public void UpdateUserPin_ShouldReturnNull(int updatedPin)
+        public async Task UpdateUserPin_ShouldReturnNull(int updatedPin)
         {
-            var newUser = _userService.CreateUser("jay", "ajayi", "Ajjay@gmail.com", 46543);
+            var newUser = await _userService.CreateUser("jay", "ajayi", "Ajjay@gmail.com", 46543);
 
-            var result = _userService.UpdateUserPin(newUser.UserId, updatedPin);
+            var result = await _userService.UpdateUserPin(newUser.UserId, updatedPin);
 
             result.Should().BeNull();
             newUser.UserPin.Should().Be(46543);
@@ -154,11 +154,11 @@ namespace PointOfSaleTests
         [Theory]
         [InlineData(" ")]
         [InlineData("")]
-        public void UpdateUserEmail_ShouldReturnNull(string updatedEmail) 
+        public async Task UpdateUserEmail_ShouldReturnNull(string updatedEmail) 
         {
-            var newUser = _userService.CreateUser("Tom", "Brady", "TBrad@gmail.com", 1111);
+            var newUser = await _userService.CreateUser("Tom", "Brady", "TBrad@gmail.com", 1111);
 
-            var result = _userService.UpdateUserEmail(newUser.UserId, updatedEmail);
+            var result = await _userService.UpdateUserEmail(newUser.UserId, updatedEmail);
 
             result.Should().BeNull();
         }
@@ -166,11 +166,11 @@ namespace PointOfSaleTests
         [Theory]
         [InlineData("")]
         [InlineData(" ")]
-        public void UpdateUserRole_ShouldReturnNull(string updatedRole)
+        public async Task UpdateUserRole_ShouldReturnNull(string updatedRole)
         {
-            var newUser = _userService.CreateUser("Drew", "Brees", "Drees@gmail.com", 45653);
+            var newUser = await _userService.CreateUser("Drew", "Brees", "Drees@gmail.com", 45653);
 
-            var result = _userService.UpdateUserRole(newUser.UserId, updatedRole);
+            var result = await _userService.UpdateUserRole(newUser.UserId, updatedRole);
 
             result.Should().BeNull();
         }

@@ -77,7 +77,7 @@ namespace PointOfSaleSystem.ViewModels
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "Error occured while trying to load the inventory items into the inventory editor viewmodel");
+                Log.Error(ex, "Error occurred while trying to load the inventory items into the inventory editor viewmodel");
             }
         }
 

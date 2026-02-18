@@ -37,16 +37,16 @@ namespace PointOfSaleTests
         [InlineData (12, "Burger", 2.50, "Food")]
         [InlineData (132, "Cheeseburger", 3.50, "Food")]
         [InlineData (220, "Pizza", 12.99, "Food")]
-        public void InventoryServiceItemCreation_ShouldReturnItem(int quantity, string name, decimal price, string category)
+        public async Task InventoryServiceItemCreation_ShouldReturnItem(int quantity, string name, decimal price, string category)
         {
-            var testMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var testMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
             testMenuItem.Should().NotBeNull();
             testMenuItem.Name.Should().Be(name);
             testMenuItem.Price.Should().Be(price);
             testMenuItem.Category.Should().Be(category);
 
-            var testInventoryItem = _inventoryService.CreateInventoryItem(testMenuItem, quantity);
+            var testInventoryItem = await _inventoryService.CreateInventoryItem(testMenuItem, quantity);
 
             testInventoryItem.Should().NotBeNull();
             testInventoryItem.MenuItem.ItemId.Should().Be(testMenuItem.ItemId);
@@ -57,60 +57,60 @@ namespace PointOfSaleTests
         [InlineData (-1, "Burger", 3.75, "Food")]
         [InlineData (0, "Cheeseburger", 5.25, "Food")]
         [InlineData (-45, "Coffee", 2.75, "Beverage")]
-        public void InventoryServiceItemCreation_ShouldReturnNull(int quantity, string name, decimal price, string category)
+        public async Task InventoryServiceItemCreation_ShouldReturnNull(int quantity, string name, decimal price, string category)
         {
-            var testMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var testMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
             testMenuItem.Should().NotBeNull();
             testMenuItem.Name.Should().Be(name);
             testMenuItem.Price.Should().Be(price);
             testMenuItem.Category.Should().Be(category);
 
-            var testInventoryItem = _inventoryService.CreateInventoryItem(testMenuItem, quantity);
+            var testInventoryItem = await _inventoryService.CreateInventoryItem(testMenuItem, quantity);
 
             testInventoryItem.Should().BeNull();
         }
 
         [Fact]
-        public void LoadInventoryTest_ShouldReturnInventoryItemsList()
+        public async Task LoadInventoryTest_ShouldReturnInventoryItemsList()
         {
-            var newMenuItem = _menuService.CreateMenuItem("Fries", 1.11m, "Food");
-            var newMenuItem2 = _menuService.CreateMenuItem("Soda", 2.50m, "Beverage");
+            var newMenuItem = await _menuService.CreateMenuItem("Fries", 1.11m, "Food");
+            var newMenuItem2 = await _menuService.CreateMenuItem("Soda", 2.50m, "Beverage");
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, 90);
-            var newInventoryItem2 = _inventoryService.CreateInventoryItem(newMenuItem2, 230);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, 90);
+            var newInventoryItem2 = await _inventoryService.CreateInventoryItem(newMenuItem2, 230);
 
-            var result = _inventoryService.LoadInventoryItems();
+            var result = await _inventoryService.LoadInventoryItems();
 
             result.Select(i => i.QuantityOnHand).Should().Contain(new[] { 90, 230 });
 
         }
 
         [Fact]
-        public void DeleteInventoryItem_ShouldReturnNull()
+        public async Task DeleteInventoryItem_ShouldReturnNull()
         {
-            var newMenuItem = _menuService.CreateMenuItem("Ham", 4.59m, "Food");
+            var newMenuItem = await _menuService.CreateMenuItem("Ham", 4.59m, "Food");
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, 100);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, 100);
 
             var newInvItemId = newInventoryItem.InventoryItemId;
 
-            _inventoryService.DeleteInventoryItem(newInventoryItem);
+            await _inventoryService.DeleteInventoryItem(newInventoryItem);
 
-            var result = _inventoryService.GetItemById(newInvItemId);
+            var result = await _inventoryService.GetItemById(newInvItemId);
 
             result.Should().BeNull();
 
         }
 
         [Fact]
-        public void InventoryGetByMenuItemId_ShouldReturnInventoryItem()
+        public async Task InventoryGetByMenuItemId_ShouldReturnInventoryItem()
         {
-            var newMenuItem = _menuService.CreateMenuItem("Coke", 2.66m, "Beverage");
+            var newMenuItem = await _menuService.CreateMenuItem("Coke", 2.66m, "Beverage");
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, 124);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, 124);
 
-            var result = _inventoryService.GetInventoryItemByMenuItemId(newMenuItem.ItemId);
+            var result = await _inventoryService.GetInventoryItemByMenuItemId(newMenuItem.ItemId);
 
             result.Should().NotBeNull();
             result.InventoryItemId.Should().Be(newInventoryItem.InventoryItemId);
@@ -122,13 +122,13 @@ namespace PointOfSaleTests
         [InlineData("Pepsi", 2.55, "Beverage", 12, 25)]
         [InlineData("Codeine", 45.55, "Special Menu", 45, 55)]
         [InlineData("Hydrocodone", 75.55, "Extra Special Menu", 200, 455)]
-        public void IncrementInventoryItem_ReturnsUpdatedItem(string name, decimal price, string category, int quantity, int quantityAdded)
+        public async Task IncrementInventoryItem_ReturnsUpdatedItem(string name, decimal price, string category, int quantity, int quantityAdded)
         {
-            var newMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var newMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, quantity);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, quantity);
 
-            var result = _inventoryService.IncrementInventoryItem(newInventoryItem.InventoryItemId, quantityAdded);
+            var result = await _inventoryService.IncrementInventoryItem(newInventoryItem.InventoryItemId, quantityAdded);
 
             result.Should().NotBeNull();
             result.InventoryItemId.Should().Be(newInventoryItem.InventoryItemId);
@@ -139,13 +139,13 @@ namespace PointOfSaleTests
         [InlineData("Special Sauce", 450.55, "Sauces", 8, -1)]
         [InlineData("Extra Special Sauce", 455.56, "Sauces", 12, 0)]
         [InlineData("Extra Extra Special Sauce", 7500.55, "Sauces", 15, -455)]
-        public void IncrementInventoryItem_ReturnsNull(string name, decimal price, string category, int quantity, int quantityAdded)
+        public async Task IncrementInventoryItem_ReturnsNull(string name, decimal price, string category, int quantity, int quantityAdded)
         {
-            var newMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var newMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, quantity);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, quantity);
 
-            var result = _inventoryService.IncrementInventoryItem(newInventoryItem.InventoryItemId, quantityAdded);
+            var result = await _inventoryService.IncrementInventoryItem(newInventoryItem.InventoryItemId, quantityAdded);
 
             result.Should().BeNull();
         }
@@ -154,13 +154,13 @@ namespace PointOfSaleTests
         [InlineData("Mountain Dew", 2.00, "Beverages", 20, 18)]
         [InlineData("Dr. Pepper", 2.55, "Beverages", 200, 155)]
         [InlineData("Mr. Pibb", 3.55, "Beverages", 455, 287)]
-        public void DecrementInventoryItem_ReturnsUpdatedItem(string name, decimal price, string category, int quantity, int quantitySold)
+        public async Task DecrementInventoryItem_ReturnsUpdatedItem(string name, decimal price, string category, int quantity, int quantitySold)
         {
-            var newMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var newMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, quantity);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, quantity);
 
-            var result = _inventoryService.DecrementInventoryItem(newInventoryItem.InventoryItemId, quantitySold);
+            var result = await _inventoryService.DecrementInventoryItem(newInventoryItem.InventoryItemId, quantitySold);
             
             result.Should().NotBeNull();
             result.InventoryItemId.Should().Be(newInventoryItem.InventoryItemId);
@@ -171,13 +171,13 @@ namespace PointOfSaleTests
         [InlineData("Dr. Thunder", 3.20, "Beverages", 155, 200)]
         [InlineData("Water", 0.50, "Beverages", 1000, 0)]
         [InlineData("Sparkling Water", 2.00, "Beverages", 10, -25)]
-        public void DecrementInventoryItem_ReturnsNull(string name, decimal price, string category, int quantity, int quantitySold)
+        public async Task DecrementInventoryItem_ReturnsNull(string name, decimal price, string category, int quantity, int quantitySold)
         {
-            var newMenuItem = _menuService.CreateMenuItem(name, price, category);
+            var newMenuItem = await _menuService.CreateMenuItem(name, price, category);
 
-            var newInventoryItem = _inventoryService.CreateInventoryItem(newMenuItem, quantity);
+            var newInventoryItem = await _inventoryService.CreateInventoryItem(newMenuItem, quantity);
 
-            var result = _inventoryService.DecrementInventoryItem(newInventoryItem.InventoryItemId, quantitySold);
+            var result = await _inventoryService.DecrementInventoryItem(newInventoryItem.InventoryItemId, quantitySold);
 
             result.Should().BeNull();
         }
