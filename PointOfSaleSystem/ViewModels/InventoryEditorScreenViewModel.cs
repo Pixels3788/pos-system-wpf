@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Collections.ObjectModel;
-
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -56,10 +56,29 @@ namespace PointOfSaleSystem.ViewModels
             _navigationService = navigationService;
             _inventoryService = inventoryService;
             _actionLogService = actionLogService;
-            _inventoryItems = new ObservableCollection<InventoryItem>(_menuCoordinator.ReconstructInventoryItems());
+            _inventoryItems = new ObservableCollection<InventoryItem>();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
             SaveInventoryCommand = new RelayCommand(SaveInventory);
-            
+            LoadInventoryItems();
+        }
+
+        private async void LoadInventoryItems()
+        {
+            try
+            {
+                var inventoryItems = await _menuCoordinator.ReconstructInventoryItems();
+
+                InventoryItems.Clear();
+                foreach (var item in inventoryItems)
+                {
+                    InventoryItems.Add(item);
+                }
+                Log.Information("Loaded {Count} inventory items into the inventory editor view model", inventoryItems.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error occured while trying to load the inventory items into the inventory editor viewmodel");
+            }
         }
 
         public void NavigateToOrderScreen()
@@ -74,7 +93,7 @@ namespace PointOfSaleSystem.ViewModels
                 foreach (var item in InventoryItems)
                 {
                     SelectedInventoryItem = item;
-                    _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
+                    await _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
                 }
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
             }

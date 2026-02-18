@@ -8,30 +8,30 @@ namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface IOrderService
     {
-        OrderLineItem? CreateOrderLineItem(MenuItem menuItem, Order order, int quantity);
+        Task<OrderLineItem?> CreateOrderLineItem(MenuItem menuItem, Order order, int quantity);
 
-        Order CreateNewOrder();
+        Task<Order?> CreateNewOrder();
 
-        void DeleteOrder(int orderId);
+        Task DeleteOrder(int orderId);
 
-        void DeleteLineItem(int lineItemId);
+        Task DeleteLineItem(int lineItemId);
 
-        OrderLineItem? UpdateOrderLineItemQuantity(int lineItemId, int quantity);
+        Task<OrderLineItem?> UpdateOrderLineItemQuantity(int lineItemId, int quantity);
 
-        List<Order> LoadOrders(bool includeLineItems = true);
+        Task<List<Order>> LoadOrders(bool includeLineItems = true);
 
-        List<OrderLineItem> LoadOrderItems();
+        Task<List<OrderLineItem>> LoadOrderItems();
 
-        Order? FinalizeOrder(int orderId);
+        Task<Order?> FinalizeOrder(int orderId);
 
-        Order? GetOrderById(int orderId);
+        Task<Order?> GetOrderById(int orderId);
 
-        List<OrderLineItem> GetOrderLineItemsByOrder(int orderId);
+        Task<List<OrderLineItem>> GetOrderLineItemsByOrder(int orderId);
 
-        OrderLineItem? GetOrderLineItemById(int lineItemId);
+        Task<OrderLineItem?> GetOrderLineItemById(int lineItemId);
 
-        List<Order> GetOpenOrders(bool includeLineItems = true);
+        Task<List<Order>> GetOpenOrders(bool includeLineItems = true);
 
-        List<Order> GetFinalizedOrders(bool includeLineItems = true);
+        Task<List<Order>> GetFinalizedOrders(bool includeLineItems = true);
     }
 }

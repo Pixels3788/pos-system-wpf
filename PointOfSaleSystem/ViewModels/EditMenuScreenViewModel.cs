@@ -10,6 +10,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using PointOfSaleSystem.Services.Interfaces;
 using System.Collections.ObjectModel;
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -117,7 +118,7 @@ namespace PointOfSaleSystem.ViewModels
             _inventoryService = inventoryService;
             _inventoryMenuCoordinator = inventoryMenuCoordinator;
             _actionLogService = actionLogService;
-            _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
+            _menuItems = new ObservableCollection<MenuItem>();
             _categories = new ObservableCollection<string>
             {
                 "Food",
@@ -130,6 +131,26 @@ namespace PointOfSaleSystem.ViewModels
             SaveItemCommand = new RelayCommand(SaveItem);   
             SaveChangesCommand = new RelayCommand(SaveChanges);
             DeleteMenuItemCommand = new RelayCommand(DeleteMenuItem);
+            LoadMenuItems();
+        }
+
+        private async void LoadMenuItems()
+        {
+            try
+            {
+                var menuItems = await _menuService.LoadMenuItems();
+
+                MenuItems.Clear();
+                foreach (var item in menuItems)
+                {
+                    MenuItems.Add(item);
+                }
+                Log.Information("Loaded {Count} Menu items into the menu editor view model", menuItems.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error loading menu items into the menu editor view model");
+            }
         }
 
         public void NavigateBack()
@@ -155,10 +176,10 @@ namespace PointOfSaleSystem.ViewModels
 
             if (string.IsNullOrWhiteSpace(NewItemCategory)) return;
 
-             _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
+            _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
 
-            _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
+            LoadMenuItems();
             OnPropertyChanged(nameof(MenuItems));
         }
 
@@ -169,18 +190,18 @@ namespace PointOfSaleSystem.ViewModels
                 foreach (var item in MenuItems)
                 {
                     SelectedMenuItem = item;
-                    _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
-                    _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
+                    await _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
+                    await _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
                 }
                 await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
             }
         }
 
-        public void DeleteMenuItem()
+        public async void DeleteMenuItem()
         {
             if (SelectedMenuItem != null)
             {
-                _menuService.DeleteMenuItem(SelectedMenuItem.ItemId);
+                await _menuService.DeleteMenuItem(SelectedMenuItem.ItemId);
                 _menuItems.Remove(SelectedMenuItem);
             }
                 

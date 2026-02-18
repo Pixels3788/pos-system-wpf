@@ -8,11 +8,11 @@ namespace PointOfSaleSystem.Services.Interfaces
     public interface IOrderInventoryCoordination
     {
 
-        OrderLineItem? DecrementOnCreation(MenuItem item, Order order, int quantity);
+        Task<OrderLineItem?> DecrementOnCreation(MenuItem item, Order order, int quantity);
 
-        void IncrementOnDeletion(OrderLineItem item);
+        Task IncrementOnDeletion(OrderLineItem item);
 
-        void DecrementOnQuantityChanged(OrderLineItem item, int quantity);
+        Task DecrementOnQuantityChanged(OrderLineItem item, int quantity);
 
     }
 }

@@ -56,7 +56,7 @@ namespace PointOfSaleSystem.ViewModels
                     Logs.Add(log);
                 }
 
-                Log.Information("Loaded {Count} actions logs", logs.Count);
+                Log.Information("Loaded {Count} actions logs into the viewmodel", logs.Count);
             }
             catch (Exception ex) 
             {

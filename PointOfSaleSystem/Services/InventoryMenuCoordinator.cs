@@ -19,13 +19,13 @@ namespace PointOfSaleSystem.Services
             _menuService = menuService;
         }
 
-        public List<InventoryItem> ReconstructInventoryItems()
+        public async Task<List<InventoryItem>> ReconstructInventoryItems()
         {
-            List<InventoryItem> inventoryItems = _inventoryService.LoadInventoryItems();
+            List<InventoryItem> inventoryItems = await _inventoryService.LoadInventoryItems();
 
             foreach (InventoryItem item in inventoryItems)
             {
-                MenuItem? menuItem = _menuService.GetItemById(item.MenuItemId);
+                MenuItem? menuItem = await _menuService.GetItemById(item.MenuItemId);
                 if (menuItem != null) {
                     item.MenuItem = menuItem;
                     item.MenuItemId = menuItem.ItemId;
@@ -37,15 +37,15 @@ namespace PointOfSaleSystem.Services
         }
 
 
-        public void CreateInventoryForMenuItem(string name, decimal price, string category, int startingQuantity)
+        public async void CreateInventoryForMenuItem(string name, decimal price, string category, int startingQuantity)
         {
             if (startingQuantity < 1) return;
 
-            MenuItem? newItem = _menuService.CreateMenuItem(name, price, category);
+            MenuItem? newItem = await _menuService.CreateMenuItem(name, price, category);
 
             if (newItem == null) return;
 
-            InventoryItem? newInventory = _inventoryService.CreateInventoryItem(newItem, startingQuantity);
+            InventoryItem? newInventory = await _inventoryService.CreateInventoryItem(newItem, startingQuantity);
         }
     }
 }

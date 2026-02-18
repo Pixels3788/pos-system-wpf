@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using Serilog;
 
 
 namespace PointOfSaleSystem.ViewModels
@@ -167,16 +168,9 @@ namespace PointOfSaleSystem.ViewModels
             _inventoryService = inventoryService;
             _actionLogService = actionLogService;
             _currentOrderLineItems = new ObservableCollection<OrderLineItem>();
-            _menuItems = new ObservableCollection<MenuItem>(_menuService.LoadMenuItems());
-            foreach (var item in _menuItems)
-            {
-                var inventoryItem = _inventoryService.GetInventoryItemByMenuItemId(item.ItemId);
-
-                if (inventoryItem != null)
-                {
-                    item.IsAvailable = inventoryItem.IsAvailable;
-                }
-            }
+            _menuItems = new ObservableCollection<MenuItem>();
+            LoadMenuItems();
+            
             
        
             
@@ -192,11 +186,39 @@ namespace PointOfSaleSystem.ViewModels
             
         }
 
-        public void AddNewOrderLineItemToOrder(MenuItem menuItem) 
+        private async void LoadMenuItems()
+        {
+            try
+            {
+                var menuItems = await _menuService.LoadMenuItems();
+
+                MenuItems.Clear();
+                foreach (var item in menuItems)
+                {
+                    MenuItems.Add(item);
+                }
+                foreach (var item in _menuItems)
+                {
+                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(item.ItemId);
+
+                    if (inventoryItem != null)
+                    {
+                        item.IsAvailable = inventoryItem.IsAvailable;
+                    }
+                }
+                Log.Information("Loaded {Count} menu items into the viewmodel", menuItems.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error loading menu items in the viewmodel");
+            }
+        }
+
+        public async void AddNewOrderLineItemToOrder(MenuItem menuItem) 
         {
             if (CurrentOrder == null)
             {
-                CurrentOrder = _orderService.CreateNewOrder();
+                CurrentOrder = await _orderService.CreateNewOrder();
             }
 
             bool updated = false;
@@ -205,16 +227,16 @@ namespace PointOfSaleSystem.ViewModels
             {
                 if (item.MenuItemId == menuItem.ItemId)
                 {
-                    _orderInventoryCoordination.DecrementOnQuantityChanged(item, 1);
-                    _orderService.UpdateOrderLineItemQuantity(item.LineItemId, item.Quantity + 1);
+                    await _orderInventoryCoordination.DecrementOnQuantityChanged(item, 1);
+                    await _orderService.UpdateOrderLineItemQuantity(item.LineItemId, item.Quantity + 1);
                     
-                    var inventoryItem = _inventoryService.GetInventoryItemByMenuItemId(item.MenuItemId);
+                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(item.MenuItemId);
                     if ( inventoryItem != null)
                     {
                         menuItem.IsAvailable = inventoryItem.IsAvailable;
                     }
 
-                    CurrentOrderLineItems = new ObservableCollection<OrderLineItem>(_orderService.GetOrderLineItemsByOrder(CurrentOrder.OrderId));
+                    CurrentOrderLineItems = new ObservableCollection<OrderLineItem>(await _orderService.GetOrderLineItemsByOrder(CurrentOrder.OrderId));
                     OnPropertyChanged(nameof(OrderTotal));
                     OnPropertyChanged(nameof(TotalAfterTax));
                     updated = true;
@@ -223,11 +245,11 @@ namespace PointOfSaleSystem.ViewModels
             }
             if (!updated) 
             {
-                OrderLineItem? newOrderItem = _orderInventoryCoordination.DecrementOnCreation(menuItem, CurrentOrder, 1);
+                OrderLineItem? newOrderItem = await _orderInventoryCoordination.DecrementOnCreation(menuItem, CurrentOrder, 1);
                 if (newOrderItem != null) 
                 {
                     CurrentOrderLineItems.Add(newOrderItem);
-                    var inventoryItem = _inventoryService.GetInventoryItemByMenuItemId(newOrderItem.MenuItemId);
+                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(newOrderItem.MenuItemId);
                     if (inventoryItem != null)
                     {
                         menuItem.IsAvailable = inventoryItem.IsAvailable;
@@ -238,14 +260,14 @@ namespace PointOfSaleSystem.ViewModels
             }
         }
 
-        public void DeleteOrderLineItemFromOrder()
+        public async void DeleteOrderLineItemFromOrder()
         {
             
-            _orderInventoryCoordination.IncrementOnDeletion(SelectedOrderItem);
+            await _orderInventoryCoordination.IncrementOnDeletion(SelectedOrderItem);
             var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == SelectedOrderItem.MenuItemId);
             if (menuItem != null)
             {
-                var inventoryItem = _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
+                var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
                 if (inventoryItem != null) 
                 {
                     menuItem.IsAvailable = inventoryItem.IsAvailable;
@@ -298,16 +320,16 @@ namespace PointOfSaleSystem.ViewModels
 
         }
 
-        public void Logout()
+        public async void Logout()
         {
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
             _navigationService.Navigate<LoginScreenViewModel>();   
         }
 
-        public void SendOrder()
+        public async void SendOrder()
         {
             if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
-            _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
+            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
             CurrentOrder = null;
             CurrentOrderLineItems.Clear();
             OnPropertyChanged(nameof(OrderTotal));
@@ -318,12 +340,12 @@ namespace PointOfSaleSystem.ViewModels
         {
             foreach (var item in CurrentOrderLineItems) 
             {
-                _orderInventoryCoordination.IncrementOnDeletion(item);
+                await _orderInventoryCoordination.IncrementOnDeletion(item);
 
                 var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == item.MenuItemId);
                 if (menuItem != null) 
                 {
-                    var inventoryItem = _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
+                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
 
                     if (inventoryItem != null)
                     {
@@ -333,7 +355,7 @@ namespace PointOfSaleSystem.ViewModels
             }
             await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
 
-            _orderService.DeleteOrder(CurrentOrder.OrderId);
+            await _orderService.DeleteOrder(CurrentOrder.OrderId);
             CurrentOrder = null;
             CurrentOrderLineItems.Clear();
             OnPropertyChanged(nameof(OrderTotal));

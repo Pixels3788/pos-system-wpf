@@ -7,20 +7,20 @@ namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface IInventoryService
     {
-        InventoryItem? CreateInventoryItem(MenuItem item, int quantity);
+        Task<InventoryItem?> CreateInventoryItem(MenuItem item, int quantity);
 
-        void DeleteInventoryItem(InventoryItem item);
+        Task DeleteInventoryItem(InventoryItem item);
 
-        InventoryItem? GetItemById(int itemId);
+        Task<InventoryItem?> GetItemById(int itemId);
 
-        List<InventoryItem> LoadInventoryItems();
+        Task<List<InventoryItem>> LoadInventoryItems();
 
-        InventoryItem? GetInventoryItemByMenuItemId(int itemId);
+        Task<InventoryItem?> GetInventoryItemByMenuItemId(int itemId);
 
-        InventoryItem? DecrementInventoryItem(int itemId, int quantitySold);
+        Task<InventoryItem?> DecrementInventoryItem(int itemId, int quantitySold);
 
-        InventoryItem? IncrementInventoryItem(int itemId, int quantityAdded);
+        Task<InventoryItem?> IncrementInventoryItem(int itemId, int quantityAdded);
 
-        InventoryItem? ChangeInventoryItemQuantity(int itemId, int newQuantity);
+        Task<InventoryItem?> ChangeInventoryItemQuantity(int itemId, int newQuantity);
     }
 }

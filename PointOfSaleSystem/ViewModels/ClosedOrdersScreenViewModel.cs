@@ -7,6 +7,7 @@ using PointOfSaleSystem.Helpers;
 using PointOfSaleSystem.Models;
 using PointOfSaleSystem.Services;
 using System.Windows.Input;
+using Serilog;
 
 
 namespace PointOfSaleSystem.ViewModels
@@ -76,8 +77,29 @@ namespace PointOfSaleSystem.ViewModels
         {
             _navigationService = navigationService;
             _orderService = orderService;
-            _closedOrders = new ObservableCollection<Order>(_orderService.GetFinalizedOrders());
+            _closedOrders = new ObservableCollection<Order>();
             NavigateToOpenOrdersCommand = new RelayCommand(NavigateToOpenOrders);
+            LoadFinalizedOrders();
+        }
+
+        private async void LoadFinalizedOrders()
+        {
+            try
+            {
+                var finalizedOrders = await _orderService.GetFinalizedOrders();
+
+                ClosedOrders.Clear();
+                foreach (var order in finalizedOrders)
+                {
+                    ClosedOrders.Add(order);
+                }
+                Log.Information("Loaded {Count} finalized orders into the viewmodel", finalizedOrders.Count);
+                
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error loading finalized orders into the viewmodel");
+            }
         }
 
         public void NavigateToOpenOrders() 
