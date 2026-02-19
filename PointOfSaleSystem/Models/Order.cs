@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
+
+// data class for representing an order
 namespace PointOfSaleSystem.Models
 {
     public class Order : INotifyPropertyChanged

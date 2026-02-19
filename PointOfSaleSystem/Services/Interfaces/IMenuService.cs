@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-
+// public interface for the menu service
 namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface IMenuService

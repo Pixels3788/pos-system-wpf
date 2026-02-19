@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Policy;
 using System.Text;
 
+// data class that represents a user
 namespace PointOfSaleSystem.Models
 {
     public class User

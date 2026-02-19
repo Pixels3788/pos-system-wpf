@@ -12,6 +12,8 @@ using System.Linq;
 using PointOfSaleSystem.Services.Interfaces;
 using Serilog;
 
+
+// View model for the manager panel
 namespace PointOfSaleSystem.ViewModels
 {
     public class ManagerPanelScreenViewModel : BaseViewModel

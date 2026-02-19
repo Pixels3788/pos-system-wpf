@@ -9,6 +9,7 @@ using System.Text;
 using PointOfSaleSystem.Services.Interfaces;
 using PointOfSaleSystem.Database.Interfaces;
 
+// Order service that is responsible for CRUD operations for the Order and Order Line Items tables in the database
 namespace PointOfSaleSystem.Services
 {
     public class OrderService : IOrderService

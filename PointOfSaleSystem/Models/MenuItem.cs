@@ -5,6 +5,8 @@ using System.Configuration;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+
+// Data class that models the menu items from the database and makes them easy to manage and present
 namespace PointOfSaleSystem.Models
 {
     public class MenuItem : INotifyPropertyChanged

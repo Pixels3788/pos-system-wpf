@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 using Serilog;
 
 
+// View model for the logs screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class LogsScreenViewModel : BaseViewModel

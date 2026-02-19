@@ -6,6 +6,8 @@ using System.ComponentModel;
 using PointOfSaleSystem.ViewModels;
 using PointOfSaleSystem.Models;
 
+
+// navigation service that is responsible for navigating between viewmodels inside of the main window
 namespace PointOfSaleSystem.Services
 {
     public class NavigationService : INavigationService, INotifyPropertyChanged

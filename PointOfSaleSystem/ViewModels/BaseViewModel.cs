@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Text;
 using System.Runtime.CompilerServices;
 
+
+// Base view model that all other view models inherit from to implement INotifyPropertyChanged and SetProperty<>
 namespace PointOfSaleSystem.ViewModels
 {
     public abstract class BaseViewModel : INotifyPropertyChanged

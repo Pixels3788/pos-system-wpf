@@ -9,6 +9,7 @@ using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Services.Interfaces;
 using Serilog;
 
+// View model for the user creation screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class CreateNewUserViewModel : BaseViewModel

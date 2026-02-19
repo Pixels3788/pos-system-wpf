@@ -9,6 +9,8 @@ using PointOfSaleSystem.Database.Interfaces;
 using Serilog;
 using Microsoft.Data.Sqlite;
 
+
+// inventory service that is responsible for CRUD operations relating to the inventory items table of the database
 namespace PointOfSaleSystem.Services
 {
     public class InventoryService : IInventoryService

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
+// data class that represents an item inside of an order
 namespace PointOfSaleSystem.Models
 {
     public class OrderLineItem : INotifyPropertyChanged

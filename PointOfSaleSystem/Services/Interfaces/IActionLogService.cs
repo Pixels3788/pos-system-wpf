@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+// public interface for the action log service
 namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface IActionLogService

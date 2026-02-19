@@ -8,6 +8,7 @@ using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Services.Interfaces;
 using Serilog;
 
+// View model for the login screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class LoginScreenViewModel : BaseViewModel

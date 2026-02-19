@@ -12,6 +12,7 @@ using PointOfSaleSystem.Services.Interfaces;
 using System.Collections.ObjectModel;
 using Serilog;
 
+// View model for the edit menu screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class EditMenuScreenViewModel : BaseViewModel

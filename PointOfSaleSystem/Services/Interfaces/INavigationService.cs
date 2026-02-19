@@ -5,6 +5,7 @@ using System.Text;
 using PointOfSaleSystem.Models;
 using PointOfSaleSystem.ViewModels;
 
+// public interface for the navigation service
 namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface INavigationService : INotifyPropertyChanged

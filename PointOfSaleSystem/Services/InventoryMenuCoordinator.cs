@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+/* inventory menu coordination service that is responsible for coordinating actions between
+ * the menu service and the inventory service
+ */
 namespace PointOfSaleSystem.Services
 {
     public class InventoryMenuCoordinator : IInventoryMenuCoordinator

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+// public interface for the order inventory coordinator
 namespace PointOfSaleSystem.Services.Interfaces
 {
     public interface IOrderInventoryCoordination

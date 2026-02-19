@@ -10,6 +10,7 @@ using PointOfSaleSystem.Database.Interfaces;
 using Microsoft.Data.Sqlite;
 using Serilog;
 
+// User service that is responsible for CRUD operations for the users table in the database
 namespace PointOfSaleSystem.Services
 {
     public class UserService : IUserService

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 
+
+// Data class that models the inventory items from the database and makes them easy to manage and present
 namespace PointOfSaleSystem.Models
 {
     public class InventoryItem : INotifyPropertyChanged

@@ -5,6 +5,8 @@ using System.Text;
 using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Services.Interfaces;
 
+
+// View model for the main window
 namespace PointOfSaleSystem.ViewModels
 {
     public class MainWindowViewModel : BaseViewModel

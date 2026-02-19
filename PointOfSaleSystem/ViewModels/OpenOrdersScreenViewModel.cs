@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using PointOfSaleSystem.Services.Interfaces;
 using Serilog;
 
+// View model for the open orders screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class OpenOrdersScreenViewModel : BaseViewModel

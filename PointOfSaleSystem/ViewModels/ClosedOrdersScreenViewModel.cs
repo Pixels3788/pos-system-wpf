@@ -9,7 +9,7 @@ using PointOfSaleSystem.Services;
 using System.Windows.Input;
 using Serilog;
 
-
+// View model for the closed orders screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class ClosedOrdersScreenViewModel : BaseViewModel

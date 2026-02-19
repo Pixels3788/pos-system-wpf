@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+
+// Data model for the action logs managers can view in the main program
 namespace PointOfSaleSystem.Models
 {
     public class ActionLog

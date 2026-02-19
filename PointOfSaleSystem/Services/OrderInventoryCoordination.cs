@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 
 
-
+// Order inventory coordination service that is responsible for coordinating CRUD operations between the order and inventory services
 namespace PointOfSaleSystem.Services
 {
     public class OrderInventoryCoordination : IOrderInventoryCoordination

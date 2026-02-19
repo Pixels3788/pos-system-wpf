@@ -12,6 +12,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Serilog;
 
+// View model for the user editor screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class UserEditorScreenViewModel : BaseViewModel

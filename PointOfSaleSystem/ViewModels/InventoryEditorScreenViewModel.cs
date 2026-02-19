@@ -12,6 +12,8 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Serilog;
 
+
+// View model for the inventory editor screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class InventoryEditorScreenViewModel : BaseViewModel

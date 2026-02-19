@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows;
 
+// Dialog service that is used for displaying error pop-ups and confirmation pop-ups inside viewmodels
 namespace PointOfSaleSystem.Services
 {
     public class DialogService : IDialogService

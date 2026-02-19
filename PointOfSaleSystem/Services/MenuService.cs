@@ -11,6 +11,8 @@ using System.Linq;
 using PointOfSaleSystem.Database.Interfaces;
 using Serilog;
 
+
+// Menu service that is responsible for CRUD operations for the menu items table of the database
 namespace PointOfSaleSystem.Services
 {
     public class MenuService : IMenuService

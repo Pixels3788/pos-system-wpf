@@ -12,7 +12,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using Serilog;
 
-
+// View model for the order taking screen
 namespace PointOfSaleSystem.ViewModels
 {
     public class OrderTakingScreenViewModel : BaseViewModel, INavigable

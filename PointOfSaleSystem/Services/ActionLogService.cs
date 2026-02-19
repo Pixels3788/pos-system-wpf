@@ -11,6 +11,8 @@ using Microsoft.Data.Sqlite;
 using System.Threading.Tasks;
 using Serilog;
 
+
+// Action log service that is responsible for CRUD operations for the actions logs table of the db
 namespace PointOfSaleSystem.Services
 {
     internal class ActionLogService : IActionLogService
