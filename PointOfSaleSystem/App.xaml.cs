@@ -39,7 +39,7 @@ namespace PointOfSaleSystem
                 ShutdownMode = ShutdownMode.OnMainWindowClose;
 
                 var dbManager = new DbManager();
-
+                IDialogService dialogService = new DialogService();
                 INavigationService navigationService = new NavigationService();
                 IActionLogService actionLogService = new ActionLogService(dbManager);
                 IUserService userService = new UserService(dbManager);
@@ -50,8 +50,8 @@ namespace PointOfSaleSystem
                 InventoryMenuCoordinator inventoryMenuCoordinator = new InventoryMenuCoordinator(inventoryService, menuService);
 
 
-                navigationService.Register(() => new LoginScreenViewModel(navigationService, userService, actionLogService));
-                navigationService.Register(() => new CreateNewUserViewModel(navigationService, userService, actionLogService));
+                navigationService.Register(() => new LoginScreenViewModel(navigationService, userService, actionLogService, dialogService));
+                navigationService.Register(() => new CreateNewUserViewModel(navigationService, userService, actionLogService, dialogService));
                 navigationService.Register(() => new OrderTakingScreenViewModel(
                     userService,
                     navigationService,
@@ -60,14 +60,15 @@ namespace PointOfSaleSystem
                     menuService,
                     inventoryMenuCoordinator,
                     inventoryService,
-                    actionLogService));
-                navigationService.Register(() => new OpenOrdersScreenViewModel(navigationService, orderService, inventoryOrderCoordination, actionLogService));
-                navigationService.Register(() => new ClosedOrdersScreenViewModel(navigationService, orderService));
-                navigationService.Register(() => new InventoryEditorScreenViewModel(inventoryMenuCoordinator, navigationService, inventoryService, actionLogService));
-                navigationService.Register(() => new ManagerPanelScreenViewModel(navigationService));
-                navigationService.Register(() => new EditMenuScreenViewModel(navigationService, menuService, inventoryMenuCoordinator, actionLogService, inventoryService));
-                navigationService.Register(() => new UserEditorScreenViewModel(navigationService, userService, actionLogService));
-                navigationService.Register(() => new LogsScreenViewModel(actionLogService, navigationService));
+                    actionLogService,
+                    dialogService));
+                navigationService.Register(() => new OpenOrdersScreenViewModel(navigationService, orderService, inventoryOrderCoordination, actionLogService, dialogService));
+                navigationService.Register(() => new ClosedOrdersScreenViewModel(navigationService, orderService, dialogService));
+                navigationService.Register(() => new InventoryEditorScreenViewModel(inventoryMenuCoordinator, navigationService, inventoryService, actionLogService, dialogService));
+                navigationService.Register(() => new ManagerPanelScreenViewModel(navigationService, dialogService));
+                navigationService.Register(() => new EditMenuScreenViewModel(navigationService, menuService, inventoryMenuCoordinator, actionLogService, inventoryService, dialogService));
+                navigationService.Register(() => new UserEditorScreenViewModel(navigationService, userService, actionLogService, dialogService));
+                navigationService.Register(() => new LogsScreenViewModel(actionLogService, navigationService, dialogService));
 
 
                 navigationService.Navigate<LoginScreenViewModel>();

@@ -21,6 +21,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly INavigationService _navigationService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<ActionLog> _logs;
 
         public ObservableCollection<ActionLog> Logs
@@ -34,10 +36,11 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateBackCommand { get; }
 
-        public LogsScreenViewModel(IActionLogService actionLogService, INavigationService navigationService)
+        public LogsScreenViewModel(IActionLogService actionLogService, INavigationService navigationService, IDialogService dialogService)
         {
             _actionLogService = actionLogService;
             _navigationService = navigationService;
+            _dialogService = dialogService;
             _logs = new ObservableCollection<ActionLog>();
             NavigateBackCommand = new RelayCommand(NavigateBack);
 
@@ -67,7 +70,15 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateBack()
         {
-            _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the manager panel from the logs screen");
+                _dialogService.ShowError("Error: An error occurred while trying to navigate to the manager panel, please try again", "Navigation Error");
+            }
         }
     }
 }

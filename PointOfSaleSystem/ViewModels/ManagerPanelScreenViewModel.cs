@@ -10,12 +10,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using PointOfSaleSystem.Services.Interfaces;
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
     public class ManagerPanelScreenViewModel : BaseViewModel
     {
         private readonly INavigationService _navigationService;
+
+        private readonly IDialogService _dialogService;
 
         public ICommand NavigateToInventoryEditorCommand { get; }
 
@@ -27,9 +30,10 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToLogsCommand { get; }
 
-        public ManagerPanelScreenViewModel(INavigationService navigationService)
+        public ManagerPanelScreenViewModel(INavigationService navigationService, IDialogService dialogService)
         {
             _navigationService = navigationService;
+            _dialogService = dialogService;
             NavigateToInventoryEditorCommand = new RelayCommand(NavigateToInventoryEditor);
             NavigateBackCommand = new RelayCommand(NavigateBack);
             NavigateToMenuEditorCommand = new RelayCommand(NavigateToMenuEditor);
@@ -39,27 +43,67 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateToInventoryEditor()
         {
-            _navigationService.Navigate<InventoryEditorScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<InventoryEditorScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the inventory editor from the manager panel");
+                _dialogService.ShowError("Error: An error occurred while trying to open the inventory editor, please try again", "Navigation Error");
+            }
         }
 
         public void NavigateBack()
         {
-            _navigationService.Navigate<OrderTakingScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<OrderTakingScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the order taking screen from the manager panel");
+                _dialogService.ShowError("Error: An error occurred while trying to open the order taking screen, please try again", "Navigation Error");
+            }
         }
 
         public void NavigateToMenuEditor()
         {
-            _navigationService.Navigate<EditMenuScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<EditMenuScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the menu editor from the manager panel");
+                _dialogService.ShowError("Error: An error occurred while trying to open the menu editor, please try again", "Navigation Error");
+            }
         }
 
         public void NavigateToUserEditor()
         {
-            _navigationService.Navigate<UserEditorScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<UserEditorScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the user editor from the manager panel");
+                _dialogService.ShowError("Error: An error occurred while trying to open the user editor, please try again", "Navigation Error");
+            }
         }
 
         public void NavigateToLogs()
         {
-            _navigationService.Navigate<LogsScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<LogsScreenViewModel>();
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the logs screen from the manager panel");
+                _dialogService.ShowError("Error: An error occurred while trying to open the logs screen, please try again", "Navigation Error");
+            }
         }
 
     }

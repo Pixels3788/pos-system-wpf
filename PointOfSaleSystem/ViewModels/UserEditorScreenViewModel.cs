@@ -22,6 +22,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IActionLogService _actionLogService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<User> _users;
 
         public ObservableCollection<User> Users
@@ -54,11 +56,12 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand DeleteUserCommand { get; }
 
-        public UserEditorScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
+        public UserEditorScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService, IDialogService dialogService)
         {
             _navigationService = navigationService;
             _userService = userService;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             _users = new ObservableCollection<User>();
             NavigateBackCommand = new RelayCommand(NavigateBack);
             PromoteUserCommand = new AsyncRelayCommand(PromoteUser);
@@ -66,6 +69,7 @@ namespace PointOfSaleSystem.ViewModels
             SaveChangesCommand = new AsyncRelayCommand(SaveChanges);
             DeleteUserCommand = new AsyncRelayCommand(DeleteUser);
             LoadUsers();
+            _dialogService = dialogService;
         }
 
         public async void LoadUsers()
@@ -88,50 +92,91 @@ namespace PointOfSaleSystem.ViewModels
         }
         public void NavigateBack()
         {
-            _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the manager panel from the user editor");
+                _dialogService.ShowError("Error: An error occurred while attempting to navigate to the manager panel, please try again", "Navigation Error");
+            }
         }
 
         public async Task PromoteUser()
         {
-            if (_selectedUser != null) {
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
-                await _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
-                LoadUsers();
-                
+            try
+            {
+                if (_selectedUser != null)
+                {
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Promotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} promoted {SelectedUser.FirstName + " " + SelectedUser.LastName} to manager");
+                    await _userService.UpdateUserRole(SelectedUser.UserId, "Manager");
+                    LoadUsers();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to promote a user in the user editor");
+                _dialogService.ShowError("Error: An error occurred while trying to promote the user, please try again", "User Promotion Error");
             }
         }
 
         public async Task DemoteUser()
         {
-            if (_selectedUser != null)
+            try
             {
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
-                await _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
-                LoadUsers();
+                if (_selectedUser != null)
+                {
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Demotion", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} demoted {SelectedUser.FirstName + " " + SelectedUser.LastName} from manager to associate");
+                    await _userService.UpdateUserRole(SelectedUser.UserId, "Associate");
+                    LoadUsers();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An unexpected error occurred while attempting to demote a user in the user editor");
+                _dialogService.ShowError("Error: An error occurred while trying to demote the user, please try again", "User Demotion Error");
             }
         }
 
         public async Task SaveChanges()
         {
-            if (SelectedUser != null)
+            try
             {
-                foreach (var user in _users) 
+                if (SelectedUser != null)
                 {
-                    SelectedUser = user;
-                    await _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
-                    await _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
-                }
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
+                    foreach (var user in _users)
+                    {
+                        SelectedUser = user;
+                        await _userService.UpdateUserPin(SelectedUser.UserId, SelectedUser.UserPin);
+                        await _userService.UpdateUserEmail(SelectedUser.UserId, SelectedUser.UserEmail);
+                    }
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "User Information Modification", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified user information");
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An unexpected error occurred while attempting to save changes to the users in the user editor");
+                _dialogService.ShowError("Error: An error occurred while trying to save changes to the users, please try again", "Save Changes Error");
             }
         }
 
         public async Task DeleteUser()
         {
-            if (_selectedUser != null)
+            try
             {
-                await _userService.DeleteUser(SelectedUser.UserId);
-                Users.Remove(SelectedUser);
+                if (_selectedUser != null)
+                {
+                    await _userService.DeleteUser(SelectedUser.UserId);
+                    Users.Remove(SelectedUser);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to delete a user inside the user editor");
+                _dialogService.ShowError("Error: An error occurred while trying to delete the user, please try again", "User Deletion Error");
             }
         }
     }

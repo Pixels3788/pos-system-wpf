@@ -18,7 +18,7 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IOrderService _orderService;
 
-        
+        private readonly IDialogService _dialogService;
 
         public decimal TodaysEarnings
         {
@@ -73,10 +73,11 @@ namespace PointOfSaleSystem.ViewModels
         }
 
         public ICommand NavigateToOpenOrdersCommand { get; }
-        public ClosedOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService) 
+        public ClosedOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService, IDialogService dialogService) 
         {
             _navigationService = navigationService;
             _orderService = orderService;
+            _dialogService = dialogService;
             _closedOrders = new ObservableCollection<Order>();
             NavigateToOpenOrdersCommand = new RelayCommand(NavigateToOpenOrders);
             LoadFinalizedOrders();
@@ -104,7 +105,15 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateToOpenOrders() 
         {
-            _navigationService.Navigate<OpenOrdersScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<OpenOrdersScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate from the closed orders screen to the open orders screen");
+                _dialogService.ShowError("Error occurred while navigating to the open orders screen", "Navigation Error");
+            }
         }
     }
 }

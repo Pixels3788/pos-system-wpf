@@ -55,6 +55,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IActionLogService _actionLogService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<MenuItem> _menuItems; 
 
         public ObservableCollection<MenuItem> MenuItems
@@ -157,7 +159,7 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToManagerPanelCommand { get; }
 
-        public OrderTakingScreenViewModel(IUserService userService, INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService, IActionLogService actionLogService)
+        public OrderTakingScreenViewModel(IUserService userService, INavigationService navigationService, IOrderInventoryCoordination orderInventoryCoordination, IOrderService orderService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IInventoryService inventoryService, IActionLogService actionLogService, IDialogService dialogService)
         {
             _userService = userService;
             _navigationService = navigationService;
@@ -167,6 +169,7 @@ namespace PointOfSaleSystem.ViewModels
             _menuService = menuService;
             _inventoryService = inventoryService;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             _currentOrderLineItems = new ObservableCollection<OrderLineItem>();
             _menuItems = new ObservableCollection<MenuItem>();
             LoadMenuItems();
@@ -216,68 +219,83 @@ namespace PointOfSaleSystem.ViewModels
 
         public async Task AddNewOrderLineItemToOrder(MenuItem menuItem) 
         {
-            if (CurrentOrder == null)
+            try
             {
-                CurrentOrder = await _orderService.CreateNewOrder();
-            }
-
-            bool updated = false;
-
-            foreach(var item in _currentOrderLineItems)
-            {
-                if (item.MenuItemId == menuItem.ItemId)
+                if (CurrentOrder == null)
                 {
-                    await _orderInventoryCoordination.DecrementOnQuantityChanged(item, 1);
-                    await _orderService.UpdateOrderLineItemQuantity(item.LineItemId, item.Quantity + 1);
-                    
-                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(item.MenuItemId);
-                    if ( inventoryItem != null)
-                    {
-                        menuItem.IsAvailable = inventoryItem.IsAvailable;
-                    }
+                    CurrentOrder = await _orderService.CreateNewOrder();
+                }
 
-                    CurrentOrderLineItems = new ObservableCollection<OrderLineItem>(await _orderService.GetOrderLineItemsByOrder(CurrentOrder.OrderId));
-                    OnPropertyChanged(nameof(OrderTotal));
-                    OnPropertyChanged(nameof(TotalAfterTax));
-                    updated = true;
-                    break;
+                bool updated = false;
+
+                foreach (var item in _currentOrderLineItems)
+                {
+                    if (item.MenuItemId == menuItem.ItemId)
+                    {
+                        await _orderInventoryCoordination.DecrementOnQuantityChanged(item, 1);
+                        await _orderService.UpdateOrderLineItemQuantity(item.LineItemId, item.Quantity + 1);
+
+                        var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(item.MenuItemId);
+                        if (inventoryItem != null)
+                        {
+                            menuItem.IsAvailable = inventoryItem.IsAvailable;
+                        }
+
+                        CurrentOrderLineItems = new ObservableCollection<OrderLineItem>(await _orderService.GetOrderLineItemsByOrder(CurrentOrder.OrderId));
+                        OnPropertyChanged(nameof(OrderTotal));
+                        OnPropertyChanged(nameof(TotalAfterTax));
+                        updated = true;
+                        break;
+                    }
+                }
+                if (!updated)
+                {
+                    OrderLineItem? newOrderItem = await _orderInventoryCoordination.DecrementOnCreation(menuItem, CurrentOrder, 1);
+                    if (newOrderItem != null)
+                    {
+                        CurrentOrderLineItems.Add(newOrderItem);
+                        var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(newOrderItem.MenuItemId);
+                        if (inventoryItem != null)
+                        {
+                            menuItem.IsAvailable = inventoryItem.IsAvailable;
+                        }
+                        OnPropertyChanged(nameof(OrderTotal));
+                        OnPropertyChanged(nameof(TotalAfterTax));
+                    }
                 }
             }
-            if (!updated) 
+            catch(Exception ex) 
             {
-                OrderLineItem? newOrderItem = await _orderInventoryCoordination.DecrementOnCreation(menuItem, CurrentOrder, 1);
-                if (newOrderItem != null) 
-                {
-                    CurrentOrderLineItems.Add(newOrderItem);
-                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(newOrderItem.MenuItemId);
-                    if (inventoryItem != null)
-                    {
-                        menuItem.IsAvailable = inventoryItem.IsAvailable;
-                    }
-                    OnPropertyChanged(nameof(OrderTotal));
-                    OnPropertyChanged(nameof(TotalAfterTax));
-                }
+                Log.Error(ex, "Unexpected error while attempting to add an order line item to an order inside the order taking viewmodel");
+                _dialogService.ShowError("Error occurred while trying to add item to order", "Adding Item Error");
             }
         }
 
         public async Task DeleteOrderLineItemFromOrder()
         {
-            
-            await _orderInventoryCoordination.IncrementOnDeletion(SelectedOrderItem);
-            var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == SelectedOrderItem.MenuItemId);
-            if (menuItem != null)
+            try
             {
-                var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
-                if (inventoryItem != null) 
+                await _orderInventoryCoordination.IncrementOnDeletion(SelectedOrderItem);
+                var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == SelectedOrderItem.MenuItemId);
+                if (menuItem != null)
                 {
-                    menuItem.IsAvailable = inventoryItem.IsAvailable;
+                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
+                    if (inventoryItem != null)
+                    {
+                        menuItem.IsAvailable = inventoryItem.IsAvailable;
+                    }
                 }
+
+
+                CurrentOrderLineItems.Remove(SelectedOrderItem);
+                OnPropertyChanged(nameof(OrderTotal));
+                OnPropertyChanged(nameof(TotalAfterTax));
             }
-
-
-            CurrentOrderLineItems.Remove(SelectedOrderItem);
-            OnPropertyChanged(nameof(OrderTotal));
-            OnPropertyChanged(nameof(TotalAfterTax));
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error while attempting to delete a line item from an order inside the order taking viewmodel");
+                _dialogService.ShowError("Error occurred while trying to delete the item from the order", "Line Item Deletion Error");
+            }
         }
 
         public async Task SeedMenuItems()
@@ -322,56 +340,95 @@ namespace PointOfSaleSystem.ViewModels
 
         public async Task Logout()
         {
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
-            _navigationService.Navigate<LoginScreenViewModel>();   
+            try
+            {
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Logged Out", $"{_navigationService.CurrentUser.FirstName} {_navigationService.CurrentUser.LastName} Logged Out of the POS");
+                _navigationService.Navigate<LoginScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to logout inside of the order taking view model");
+                _dialogService.ShowError("Error occurred while trying to logout of the POS", "Logout Error");
+            }
         }
 
         public async Task SendOrder()
         {
-            if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
-            CurrentOrder = null;
-            CurrentOrderLineItems.Clear();
-            OnPropertyChanged(nameof(OrderTotal));
-            OnPropertyChanged(nameof(TotalAfterTax));
+            try
+            {
+                if (CurrentOrder == null || CurrentOrderLineItems.Count <= 0) return;
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Order Creation", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new order with the ID {CurrentOrder.OrderId} worth a total of ${Math.Round(TotalAfterTax, 2)}");
+                CurrentOrder = null;
+                CurrentOrderLineItems.Clear();
+                OnPropertyChanged(nameof(OrderTotal));
+                OnPropertyChanged(nameof(TotalAfterTax));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to send an order inside of the order taking view model");
+                _dialogService.ShowError("Error occurred while attempting to send the current order through", "Sent Order Error");
+            }
         }
 
         public async Task CancelOrder()
         {
-            foreach (var item in CurrentOrderLineItems) 
+            try
             {
-                await _orderInventoryCoordination.IncrementOnDeletion(item);
-
-                var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == item.MenuItemId);
-                if (menuItem != null) 
+                foreach (var item in CurrentOrderLineItems)
                 {
-                    var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
+                    await _orderInventoryCoordination.IncrementOnDeletion(item);
 
-                    if (inventoryItem != null)
+                    var menuItem = MenuItems.FirstOrDefault(m => m.ItemId == item.MenuItemId);
+                    if (menuItem != null)
                     {
-                        menuItem.IsAvailable = inventoryItem.IsAvailable;
+                        var inventoryItem = await _inventoryService.GetInventoryItemByMenuItemId(menuItem.ItemId);
+
+                        if (inventoryItem != null)
+                        {
+                            menuItem.IsAvailable = inventoryItem.IsAvailable;
+                        }
                     }
                 }
-            }
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Deleted Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {CurrentOrder.OrderId} Which was worth ${Math.Round(TotalAfterTax, 2)}");
 
-            await _orderService.DeleteOrder(CurrentOrder.OrderId);
-            CurrentOrder = null;
-            CurrentOrderLineItems.Clear();
-            OnPropertyChanged(nameof(OrderTotal));
-            OnPropertyChanged(nameof(TotalAfterTax));
+                await _orderService.DeleteOrder(CurrentOrder.OrderId);
+                CurrentOrder = null;
+                CurrentOrderLineItems.Clear();
+                OnPropertyChanged(nameof(OrderTotal));
+                OnPropertyChanged(nameof(TotalAfterTax));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to cancel an order inside the order taking view model");
+                _dialogService.ShowError("Error occurred while attempting to cancel the current order", "Order Cancellation Error");
+            }
         }
 
         public void NavigateToOpenOrders()
         {
-            
-            _navigationService.Navigate<OpenOrdersScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<OpenOrdersScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the open orders screen from the order taking screen");
+                _dialogService.ShowError("Error occurred while trying to navigate to the open orders screen, please try again", "Navigation Error");
+            }
         }
 
         public async Task NavigateToManagerPanel()
         {
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
-            _navigationService.Navigate<ManagerPanelScreenViewModel>();  
+            try
+            {
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Accessed Manager Panel", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} Accessed the manager panel");
+                _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the manager panel from the order taking screen");
+                _dialogService.ShowError("Error occurred while trying to navigate to the manager panel, please try again", "Navigation Error");
+            }
         }
 
 

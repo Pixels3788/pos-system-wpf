@@ -7,7 +7,7 @@ using PointOfSaleSystem.Helpers;
 using PointOfSaleSystem.Models;
 using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Services.Interfaces;
-
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -17,6 +17,7 @@ namespace PointOfSaleSystem.ViewModels
         private readonly IUserService _userService;
         private readonly INavigationService _navigationService;
         private readonly IActionLogService _actionLogService;
+        private readonly IDialogService _dialogService;
 
         private string? _firstName;
         
@@ -82,46 +83,64 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToLoginCommand { get; }
 
-        public CreateNewUserViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
+        public CreateNewUserViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService, IDialogService dialogService)
         {
             _userService = userService;
             _navigationService = navigationService;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             CreateUserCommand = new AsyncRelayCommand(CreateUser, () => !string.IsNullOrWhiteSpace(FirstName) && !string.IsNullOrWhiteSpace(LastName)
                                                 && !string.IsNullOrWhiteSpace(UserEmail) && !string.IsNullOrWhiteSpace(UserPin));
             NavigateToLoginCommand = new RelayCommand(BackToLogin);
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
         }
 
         public async Task CreateUser()
         {
-            if (_firstName == null) return;
-            if (_lastName == null) return;
-            if (_userEmail == null) return;
-            if (_userPin == null) return;
-            
-            if (!int.TryParse(_userPin, out int newPin))
+            try
             {
-                return;
-            }
+                if (_firstName == null) return;
+                if (_lastName == null) return;
+                if (_userEmail == null) return;
+                if (_userPin == null) return;
 
-            User? newUser = await _userService.CreateUser(FirstName, LastName, UserEmail, newPin);
+                if (!int.TryParse(_userPin, out int newPin))
+                {
+                    return;
+                }
 
-            if (newUser == null)
-            {
-                CreationMessage = "User creation failed, please try again";
-                return;
+                User? newUser = await _userService.CreateUser(FirstName, LastName, UserEmail, newPin);
+
+                if (newUser == null)
+                {
+                    CreationMessage = "User creation failed, please try again";
+                    return;
+                }
+                else
+                {
+                    await _actionLogService.CreateActionLog(newUser, "Account Creation", $"A new account was created for {newUser.FirstName} {newUser.LastName}");
+                    CreationMessage = "User Creation Succeeded! User has been registered";
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await _actionLogService.CreateActionLog(newUser, "Account Creation", $"A new account was created for {newUser.FirstName} {newUser.LastName}");
-                CreationMessage = "User Creation Succeeded! User has been registered";
+                Log.Error(ex, "Unexpected error occurred while attempting to create a new user");
+                _dialogService.ShowError("Error, could not create a new user, please try again", "User Creation Error");
             }
         }
 
         public void BackToLogin()
         {
-            _navigationService.Navigate<LoginScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<LoginScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the login screen from the user creation screen");
+                _dialogService.ShowError("Error, could not navigate to the login screen, please try again", "Navigation Error");
+            }
         }
  
 

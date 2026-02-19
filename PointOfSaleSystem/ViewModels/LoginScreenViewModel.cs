@@ -6,6 +6,7 @@ using PointOfSaleSystem.Helpers;
 using PointOfSaleSystem.Models;
 using PointOfSaleSystem.Services;
 using PointOfSaleSystem.Services.Interfaces;
+using Serilog;
 
 namespace PointOfSaleSystem.ViewModels
 {
@@ -17,6 +18,8 @@ namespace PointOfSaleSystem.ViewModels
         private readonly IUserService _userService;
 
         private readonly IActionLogService _actionLogService;
+
+        private readonly IDialogService _dialogService;
 
         private string? _pinInput;
 
@@ -49,11 +52,12 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand OpenCreationMenuCommand { get;  }
 
-        public LoginScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService)
+        public LoginScreenViewModel(INavigationService navigationService, IUserService userService, IActionLogService actionLogService, IDialogService dialogService)
         {
             _navigationService = navigationService;
             _userService = userService;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             AttemptLoginCommand = new AsyncRelayCommand(AttemptLogin, () => !string.IsNullOrEmpty(PinInput) && PinInput.Length >= 4 && PinInput.Length <= 6);
             EnterDigitCommand = new RelayCommand<string>(digit =>
             {
@@ -68,36 +72,52 @@ namespace PointOfSaleSystem.ViewModels
             });
             OpenCreationMenuCommand = new RelayCommand(OpenUserCreationScreen);
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
         }
 
 
         public async Task AttemptLogin()
         {
-            
-            if (!int.TryParse(_pinInput, out int inputtedPin))
+            try
             {
-                return;
-            }
-            User? loggedUser = await _userService.GetUserByPin(inputtedPin);
+                if (!int.TryParse(_pinInput, out int inputtedPin))
+                {
+                    return;
+                }
+                User? loggedUser = await _userService.GetUserByPin(inputtedPin);
 
-            if (loggedUser == null) 
-            {
-                PinInput = string.Empty;
-                LoginMessage = "Invalid pin, please try again";
-                return;
+                if (loggedUser == null)
+                {
+                    PinInput = string.Empty;
+                    LoginMessage = "Invalid pin, please try again";
+                    return;
+                }
+                else
+                {
+                    LoginMessage = "Successful Login";
+                    _navigationService.SetCurrentUser(loggedUser);
+                    await _actionLogService.CreateActionLog(loggedUser, "Logged in", $"{loggedUser.FirstName} Logged into the POS");
+                    _navigationService.Navigate<OrderTakingScreenViewModel>();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                LoginMessage = "Successful Login";
-                _navigationService.SetCurrentUser(loggedUser);
-                await _actionLogService.CreateActionLog(loggedUser, "Logged in", $"{loggedUser.FirstName} Logged into the POS");
-                _navigationService.Navigate<OrderTakingScreenViewModel>();
+                Log.Error(ex, "Unexpected error occurred while the user attempted to log in");
+                _dialogService.ShowError("Error: An error occurred while trying to log you in, please try again", "Login Error");
             }
         }
 
         public void OpenUserCreationScreen()
         {
-            _navigationService.Navigate<CreateNewUserViewModel>();
+            try
+            {
+                _navigationService.Navigate<CreateNewUserViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Unexpected error occurred while attempting to navigate to the user creation screen inside of the login viewmodel");
+                _dialogService.ShowError("Error: An error occurred while attempting to navigate to the user creation screen, please try again", "Navigation Error");
+            }
         }
     }
 }

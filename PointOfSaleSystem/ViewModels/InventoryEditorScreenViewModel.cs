@@ -24,6 +24,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IActionLogService _actionLogService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<InventoryItem> _inventoryItems;
 
         public ObservableCollection<InventoryItem> InventoryItems
@@ -50,12 +52,13 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand SaveInventoryCommand { get; }
 
-        public InventoryEditorScreenViewModel(IInventoryMenuCoordinator menuCoordinator, INavigationService navigationService, IInventoryService inventoryService, IActionLogService actionLogService)
+        public InventoryEditorScreenViewModel(IInventoryMenuCoordinator menuCoordinator, INavigationService navigationService, IInventoryService inventoryService, IActionLogService actionLogService, IDialogService dialogService)
         {
             _menuCoordinator = menuCoordinator;
             _navigationService = navigationService;
             _inventoryService = inventoryService;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             _inventoryItems = new ObservableCollection<InventoryItem>();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
             SaveInventoryCommand = new AsyncRelayCommand(SaveInventory);
@@ -83,19 +86,35 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateToOrderScreen()
         {
-            _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to navigate to the manager panel from the inventory editor");
+                _dialogService.ShowError("Error: Could not navigate to the manager panel, please try again", "Navigation Error");
+            }
         }
 
         public async Task SaveInventory()
         {
-            if (SelectedInventoryItem != null)
+            try
             {
-                foreach (var item in InventoryItems)
+                if (SelectedInventoryItem != null)
                 {
-                    SelectedInventoryItem = item;
-                    await _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
+                    foreach (var item in InventoryItems)
+                    {
+                        SelectedInventoryItem = item;
+                        await _inventoryService.ChangeInventoryItemQuantity(SelectedInventoryItem.InventoryItemId, SelectedInventoryItem.QuantityOnHand);
+                    }
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
                 }
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Inventory", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing inventory");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to save the changes to the inventory");
+                _dialogService.ShowError("Error: Could not save the changes to the inventory, please try again", "Inventory Saving Error");
             }
         }
     }

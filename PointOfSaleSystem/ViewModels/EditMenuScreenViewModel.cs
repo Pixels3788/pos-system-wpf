@@ -26,6 +26,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IActionLogService _actionLogService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<MenuItem> _menuItems;
 
         public ObservableCollection<MenuItem> MenuItems
@@ -111,13 +113,14 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand DeleteMenuItemCommand { get; }
 
-        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IActionLogService actionLogService, IInventoryService inventoryService)
+        public EditMenuScreenViewModel(INavigationService navigationService, IMenuService menuService, IInventoryMenuCoordinator inventoryMenuCoordinator, IActionLogService actionLogService, IInventoryService inventoryService, IDialogService dialogService)
         {
             _navigationService = navigationService;
             _menuService = menuService;
             _inventoryService = inventoryService;
             _inventoryMenuCoordinator = inventoryMenuCoordinator;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             _menuItems = new ObservableCollection<MenuItem>();
             _categories = new ObservableCollection<string>
             {
@@ -155,56 +158,87 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateBack()
         {
-            _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<ManagerPanelScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while navigating to the manager panel from the edit menu screen");
+                _dialogService.ShowError("Error, could not navigate to the manager panel", "Navigation Error");
+            }
         }
 
         public async Task SaveItem()
         {
-            if (!int.TryParse(_newItemQuantity, out int newItemQuantity))
+            try
             {
-                return;
-            }
+                if (!int.TryParse(_newItemQuantity, out int newItemQuantity))
+                {
+                    return;
+                }
 
-            if (!decimal.TryParse(_newItemPrice, out decimal newItemPrice))
+                if (!decimal.TryParse(_newItemPrice, out decimal newItemPrice))
+                {
+                    return;
+                }
+
+                if (newItemQuantity < 0) return;
+
+                if (string.IsNullOrWhiteSpace(NewItemName)) return;
+
+                if (string.IsNullOrWhiteSpace(NewItemCategory)) return;
+
+                _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
+
+                LoadMenuItems();
+                OnPropertyChanged(nameof(MenuItems));
+            }
+            catch (Exception ex)
             {
-                return;
+                Log.Error(ex, "Unexpected error occurred while saving a new item inside the edit menu screen");
+                _dialogService.ShowError("Error, could not save the new item, please try again", "Item Saving Error");
             }
-
-            if (newItemQuantity < 0) return;
-
-            if (string.IsNullOrWhiteSpace(NewItemName)) return;
-
-            if (string.IsNullOrWhiteSpace(NewItemCategory)) return;
-
-            _inventoryMenuCoordinator.CreateInventoryForMenuItem(NewItemName, newItemPrice, NewItemCategory, newItemQuantity);
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Created Menu Item", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} created a new menu item named {NewItemName}");
-
-            LoadMenuItems();
-            OnPropertyChanged(nameof(MenuItems));
         }
 
         public async Task SaveChanges()
         {
-            if (SelectedMenuItem != null)
+            try
             {
-                foreach (var item in MenuItems)
+                if (SelectedMenuItem != null)
                 {
-                    SelectedMenuItem = item;
-                    await _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
-                    await _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
+                    foreach (var item in MenuItems)
+                    {
+                        SelectedMenuItem = item;
+                        await _menuService.UpdateItemPrice(SelectedMenuItem.ItemId, SelectedMenuItem.Price);
+                        await _menuService.UpdateItemName(SelectedMenuItem.ItemId, SelectedMenuItem.Name);
+                    }
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
                 }
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Modified Menu", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} modified existing menu items");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while saving changes to the menu items inside the edit menu screen");
+                _dialogService.ShowError("Error, could not save the changes to the menu items, please try again", "Save Changes Error");
             }
         }
 
         public async Task DeleteMenuItem()
         {
-            if (SelectedMenuItem != null)
+            try
             {
-                await _menuService.DeleteMenuItem(SelectedMenuItem.ItemId);
-                _menuItems.Remove(SelectedMenuItem);
+                if (SelectedMenuItem != null)
+                {
+                    await _menuService.DeleteMenuItem(SelectedMenuItem.ItemId);
+                    _menuItems.Remove(SelectedMenuItem);
+                }
             }
-                
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while deleting a menu item inside the edit menu screen");
+                _dialogService.ShowError("Error, could not delete item, please try again", "Item Deletion Error");
+            }
         }
     }
 }

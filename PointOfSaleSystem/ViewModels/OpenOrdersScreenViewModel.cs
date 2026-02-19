@@ -24,6 +24,8 @@ namespace PointOfSaleSystem.ViewModels
 
         private readonly IActionLogService _actionLogService;
 
+        private readonly IDialogService _dialogService;
+
         private ObservableCollection<Order> _openOrders;
 
         public ObservableCollection<Order> OpenOrders
@@ -92,12 +94,13 @@ namespace PointOfSaleSystem.ViewModels
 
         public ICommand NavigateToFinalizedOrdersCommand { get; }
 
-        public OpenOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService, IOrderInventoryCoordination orderInventoryCoordination, IActionLogService actionLogService)
+        public OpenOrdersScreenViewModel(INavigationService navigationService, IOrderService orderService, IOrderInventoryCoordination orderInventoryCoordination, IActionLogService actionLogService, IDialogService dialogService)
         {
             _navigationService = navigationService;
             _orderService = orderService;
             _orderInventoryCoordination = orderInventoryCoordination;
             _actionLogService = actionLogService;
+            _dialogService = dialogService;
             _openOrders = new ObservableCollection<Order>();
             _selectedOrder = new Order();
             NavigateToOrderScreenCommand = new RelayCommand(NavigateToOrderScreen);
@@ -131,61 +134,100 @@ namespace PointOfSaleSystem.ViewModels
 
         public void NavigateToOrderScreen()
         {
-            _navigationService.Navigate<OrderTakingScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<OrderTakingScreenViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the order taking screen from the open orders viewmodel");
+                _dialogService.ShowError("Error: An error occurred while trying to navigate to the order taking screen, please try again", "Navigation Error");
+            }
         }
 
         public void NavigateToFinalizedOrders()
         {
-            _navigationService.Navigate<ClosedOrdersScreenViewModel>();
+            try
+            {
+                _navigationService.Navigate<ClosedOrdersScreenViewModel>();
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to navigate to the finalized orders screen from the open orders screen");
+                _dialogService.ShowError("An error occurred while trying to navigate to the finalized orders screen, please try again", "Navigation Error");
+            }
         }
         public async Task CancelOrder()
         {
-            if (SelectedOrder != null)
+            try
             {
-                foreach(var orderItem in SelectedOrder.LineOrder)
+                if (SelectedOrder != null)
                 {
-                    await _orderInventoryCoordination.IncrementOnDeletion(orderItem);
-                }
-                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Cancelled Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {SelectedOrder.OrderId} which was worth a total of ${SelectedOrder.TotalAfterTax}");
-                await _orderService.DeleteOrder(SelectedOrder.OrderId);
-                OpenOrders.Remove(SelectedOrder);
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        public async Task FinalizeOrder() 
-        {
-            if (_selectedOrder != null)
-            {
-                
-                if (!decimal.TryParse(CashReceived, out decimal inputtedCash))
-                {
-                    return;
-                }
-
-                if (inputtedCash == SelectedOrder.TotalAfterTax || inputtedCash > SelectedOrder.TotalAfterTax)
-                {
-                    ChangeDue = inputtedCash - SelectedOrder.TotalAfterTax;
-                    await _orderService.FinalizeOrder(SelectedOrder.OrderId);
-                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Finalized Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} finalized order {SelectedOrder.OrderId} by receiving ${inputtedCash} as payment and dispensing ${ChangeDue} in change back to the customer");
+                    foreach (var orderItem in SelectedOrder.LineOrder)
+                    {
+                        await _orderInventoryCoordination.IncrementOnDeletion(orderItem);
+                    }
+                    await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Cancelled Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} cancelled order {SelectedOrder.OrderId} which was worth a total of ${SelectedOrder.TotalAfterTax}");
+                    await _orderService.DeleteOrder(SelectedOrder.OrderId);
                     OpenOrders.Remove(SelectedOrder);
-                    CashReceived = "";
                 }
                 else
                 {
                     return;
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to cancel an order inside the open orders view model");
+                _dialogService.ShowError("Error: An error occurred while trying to cancel the order, please try again", "Order Cancellation Error");
+            }
+        }
+
+        public async Task FinalizeOrder() 
+        {
+            try
+            {
+                if (_selectedOrder != null)
+                {
+
+                    if (!decimal.TryParse(CashReceived, out decimal inputtedCash))
+                    {
+                        return;
+                    }
+
+                    if (inputtedCash == SelectedOrder.TotalAfterTax || inputtedCash > SelectedOrder.TotalAfterTax)
+                    {
+                        ChangeDue = inputtedCash - SelectedOrder.TotalAfterTax;
+                        await _orderService.FinalizeOrder(SelectedOrder.OrderId);
+                        await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Finalized Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} finalized order {SelectedOrder.OrderId} by receiving ${inputtedCash} as payment and dispensing ${ChangeDue} in change back to the customer");
+                        OpenOrders.Remove(SelectedOrder);
+                        CashReceived = "";
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while attempting to finalize an order inside the open orders view model");
+                _dialogService.ShowError("Error: An error occurred while trying to finalize the order, please try again", "Order Finalization Error");
+            }
         }
 
         public async Task EditOrder()
         {
-            await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
-            _navigationService.Navigate<OrderTakingScreenViewModel>(SelectedOrder);
-
+            try
+            {
+                await _actionLogService.CreateActionLog(_navigationService.CurrentUser, "Edited Order", $"{_navigationService.CurrentUser.FirstName + " " + _navigationService.CurrentUser.LastName} edited order {SelectedOrder.OrderId}");
+                _navigationService.Navigate<OrderTakingScreenViewModel>(SelectedOrder);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unexpected error occurred while trying to edit an order inside the open orders viewmodel");
+                _dialogService.ShowError("Error: An error occurred while trying to edit the order, please try again", "Order Editing Error");
+            }
         }
     }
 }
