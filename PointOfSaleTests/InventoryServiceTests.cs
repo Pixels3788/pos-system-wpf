@@ -120,8 +120,8 @@ namespace PointOfSaleTests
 
         [Theory]
         [InlineData("Pepsi", 2.55, "Beverage", 12, 25)]
-        [InlineData("Codeine", 45.55, "Special Menu", 45, 55)]
-        [InlineData("Hydrocodone", 75.55, "Extra Special Menu", 200, 455)]
+        [InlineData("suhsi", 45.55, "Special Menu", 45, 55)]
+        [InlineData("sushi", 75.55, "Extra Special Menu", 200, 455)]
         public async Task IncrementInventoryItem_ReturnsUpdatedItem(string name, decimal price, string category, int quantity, int quantityAdded)
         {
             var newMenuItem = await _menuService.CreateMenuItem(name, price, category);

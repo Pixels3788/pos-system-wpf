@@ -107,8 +107,8 @@ namespace PointOfSaleTests
 
         [Theory]
         [InlineData ("Cheeseburger", 2.25, "Food")]
-        [InlineData ("HandyJ", 45.00, "Special")]
-        [InlineData ("BJ", 125.00, "Extra Special")]
+        [InlineData ("Hmm", 45.00, "Special")]
+        [InlineData ("hhm", 125.00, "Extra Special")]
         public async Task MenuItemDeletion_ShouldReturnVoid(string name, decimal price, string category) 
         {
             var newItem = await _menuService.CreateMenuItem(name, price, category);

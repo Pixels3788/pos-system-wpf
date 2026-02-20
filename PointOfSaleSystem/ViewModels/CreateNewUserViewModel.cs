@@ -28,7 +28,7 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _firstName, value);
-                ((RelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
+                ((AsyncRelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -40,7 +40,7 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _lastName, value);
-                ((RelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
+                ((AsyncRelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -52,7 +52,7 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _userEmail, value);
-                ((RelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
+                ((AsyncRelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -64,7 +64,7 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _userPin, value);
-                ((RelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
+                ((AsyncRelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
             }
         }
 
@@ -76,7 +76,7 @@ namespace PointOfSaleSystem.ViewModels
             set
             {
                 SetProperty(ref _creationMessage, value);
-                ((RelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
+                ((AsyncRelayCommand)CreateUserCommand).RaiseCanExecuteChanged();
             }
         }
 
