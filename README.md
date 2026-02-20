@@ -144,6 +144,8 @@ This project taught me a great deal about how to develop software, creating the 
 
 This project also taught me what dependency injection is and why it is so useful, which is a concept that I am sure will greatly benefit me in my future as a developer. I also gained a lot of valuable problem solving skills because I constantly had to think about how to solve certain issues I had run into or think about how to implement certain features that I wanted. And even though I already knew that the ability to research and find answers as a developer was important, I got to really see how important it is because I constantly had to do deep dives into documentation to find information or a solution to an issue or question I had. 
 
+I also learned a lot about the value of testing your code and writing integration tests and test cases. Outside of school, this is the first time I have written them for a personal project of mine and doing it not only made me better at writing them, but taught me their value. They allowed me to make various changes to things and then run the tests to ensure those changes did not create new bugs. That was invaluable while refactoring things over time. I also got to see the value in using something like serilog to maintain detailed logs throughout the program for debugging purposes and identifying where errors are happening. Both of these things are skills I know I will carry over to future projects.
+
 ---
 
 
